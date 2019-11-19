@@ -1,0 +1,14 @@
+{
+    "manifestVersion": 1,
+    "deployments": {
+        "aspNetCoreWeb": [{
+                "name": "Devpodcasts",
+                "parameters": {
+                    "appBundle": "devpodcasts.zip",
+                    "iisPath": "/",
+                    "iisWebSite": "Devpodcasts"
+                }
+            }
+        ]
+    }
+}
