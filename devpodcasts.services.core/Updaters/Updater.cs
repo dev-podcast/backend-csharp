@@ -8,10 +8,10 @@ namespace DevPodcast.Services.Core.Updaters
 {
     public abstract class Updater
     {
-        protected IDbContextFactory DbContextFactory { get; }
-        protected ApplicationDbContext Context { get; set; }
-        protected IConfiguration Configuration { get; }
-        protected ILogger<IUpdater> Logger { get; }
+        protected static IDbContextFactory  DbContextFactory { get; set; }
+        protected static ApplicationDbContext Context { get; set; }
+        protected static IConfiguration Configuration { get; set; }
+        protected static ILogger<IUpdater> Logger { get; set; }
 
         protected Updater(ILogger<IUpdater> logger, IConfiguration configuration,IDbContextFactory dbContextFactory)
         {

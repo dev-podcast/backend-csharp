@@ -40,7 +40,7 @@ namespace DevPodcast.Services.Core.Updaters
             }
         }
 
-        private async Task GetEpisodeDataFromXml(XElement episode, Podcast podcast)
+        private static async Task GetEpisodeDataFromXml(XElement episode, Podcast podcast)
         {
             IEnumerable<XElement> childElements = episode.Elements().ToList();
             if (childElements.Any())
@@ -74,7 +74,7 @@ namespace DevPodcast.Services.Core.Updaters
             });
         }
 
-        private async Task CreateNewEpisode(IConfiguration config, XElement title,
+        private static async Task CreateNewEpisode(IConfiguration config, XElement title,
             Podcast podcast, IEnumerable<XElement> childElements)
         {
             Logger.LogInformation("Adding Episode: " + title.Value + ". " + podcast.Id);
@@ -145,7 +145,7 @@ namespace DevPodcast.Services.Core.Updaters
             return tagsFromXml;
         }
 
-        private async Task CreateTags(IConfiguration config, Episode newEpisode, IEnumerable<string> tagsFromXml, IEnumerable<PodcastTag> parentTags)
+        private static async Task CreateTags(IConfiguration config, Episode newEpisode, IEnumerable<string> tagsFromXml, IEnumerable<PodcastTag> parentTags)
         {
             var newTags = new List<Tag>();
             var context = DbContextFactory.CreateDbContext(config);
