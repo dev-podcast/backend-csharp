@@ -262,6 +262,3 @@ __pycache__/
 /thedevpodcasts.pem
 
 #config
-devpodcasts.server.core/appsettings.json
-devpodcasts.services.core/appsettings.json
-appsettings.json
