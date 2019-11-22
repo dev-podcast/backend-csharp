@@ -17,11 +17,16 @@ namespace DevPodcast.Services.Core.Updaters
             return Task.Run(async () =>
             {
                 //Clean up podcasts without episodes
-                Context = DbContextFactory.CreateDbContext(Configuration);
-                var podcasts = Context.Podcast.Where(p => p.Episodes.Count == 0).ToList();
-                Context.Podcast.RemoveRange(podcasts);
-                await Context.SaveChangesAsync().ConfigureAwait(false);
+                await RemovePodcastsWithoutEpisodes().ConfigureAwait(false);
             });
+        }
+
+        public async Task RemovePodcastsWithoutEpisodes()
+        {
+            Context = DbContextFactory.CreateDbContext(Configuration);
+            var podcasts = Context.Podcast.Where(p => p.Episodes.Count == 0).ToList();
+            Context.Podcast.RemoveRange(podcasts);
+            await Context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }

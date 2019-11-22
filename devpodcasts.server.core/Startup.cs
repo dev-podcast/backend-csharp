@@ -32,8 +32,10 @@ namespace DevPodcast.Server.core
                         = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<ApplicationDbContext>(options =>
             {
+                var connStringKey = Configuration.GetSection("ConnectionStrings").GetValue<string>("PodcastDb");
+                var connectionString = Configuration.GetSection(connStringKey).GetValue<string>(connStringKey);
                 options.EnableSensitiveDataLogging(true);
-                options.UseSqlServer(Configuration.GetConnectionString("PodcastDb"));
+                options.UseSqlServer(connectionString);
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();

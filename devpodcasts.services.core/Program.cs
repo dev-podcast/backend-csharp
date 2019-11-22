@@ -1,4 +1,5 @@
-﻿using DevPodcast.Data.EntityFramework;
+﻿using System;
+using DevPodcast.Data.EntityFramework;
 using DevPodcast.Domain;
 using DevPodcast.Services.Core.Interfaces;
 using DevPodcast.Services.Core.Updaters;
@@ -8,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Amazon.SecretsManager;
+using Amazon.SecretsManager.Model;
 
 namespace DevPodcast.Services.Core
 {
@@ -42,9 +45,13 @@ namespace DevPodcast.Services.Core
      
         public static IConfiguration LoadConfiguration()
         {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environmentName}.json", optional:true, reloadOnChange: true)
+                .AddSecretsManager();
             return builder.Build();
         }
 

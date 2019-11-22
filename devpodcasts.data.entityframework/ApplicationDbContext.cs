@@ -5,6 +5,10 @@ namespace DevPodcast.Data.EntityFramework
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
         public virtual DbSet<BasePodcast> BasePodcast { get; set; }
         public virtual DbSet<Episode> Episode { get; set; }
         public virtual DbSet<EpisodeTag> EpisodeTag { get; set; }
@@ -15,14 +19,11 @@ namespace DevPodcast.Data.EntityFramework
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Tag> Tag { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-            {}
+            {
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,7 +38,7 @@ namespace DevPodcast.Data.EntityFramework
 
             modelBuilder.Entity<EpisodeCategory>(entity =>
             {
-                entity.HasKey(e => new { e.CategoryId, e.EpisodeId });
+                entity.HasKey(e => new {e.CategoryId, e.EpisodeId});
 
                 entity.HasOne(d => d.Episode)
                     .WithMany(p => p.EpisodeCategories)
@@ -50,15 +51,15 @@ namespace DevPodcast.Data.EntityFramework
 
             modelBuilder.Entity<PodcastCategory>(entity =>
             {
-                entity.HasKey(e => new { e.CategoryId, e.PodcastId });
+                entity.HasKey(e => new {e.CategoryId, e.PodcastId});
 
                 entity.HasOne(d => d.Podcast)
                     .WithMany(p => p.PodcastCategories)
                     .HasForeignKey(d => d.PodcastId);
 
                 entity.HasOne(d => d.Category)
-                        .WithMany(p => p.PodcastCategories)
-                        .HasForeignKey(d => d.CategoryId);
+                    .WithMany(p => p.PodcastCategories)
+                    .HasForeignKey(d => d.CategoryId);
             });
 
             modelBuilder.Entity<BasePodcast>(entity =>
@@ -97,7 +98,7 @@ namespace DevPodcast.Data.EntityFramework
 
             modelBuilder.Entity<EpisodeTag>(entity =>
             {
-                entity.HasKey(e => new { e.TagId, e.EpisodeId });
+                entity.HasKey(e => new {e.TagId, e.EpisodeId});
 
                 entity.HasOne(d => d.Episode)
                     .WithMany(p => p.EpisodeTags)
@@ -136,7 +137,7 @@ namespace DevPodcast.Data.EntityFramework
 
             modelBuilder.Entity<PodcastTag>(entity =>
             {
-                entity.HasKey(e => new { e.TagId, e.PodcastId });
+                entity.HasKey(e => new {e.TagId, e.PodcastId});
 
                 entity.HasOne(d => d.Podcast)
                     .WithMany(p => p.PodcastTags)
