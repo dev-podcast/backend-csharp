@@ -41,8 +41,8 @@ namespace DevPodcast.Services.Core.Test
         public async void When_new_episode_exists_Then_update_podcast()
         {
             // await itunesEpisodeUpdater.UpdateDataAsync();
-            var itunesEpisodeUpdater = new ItunesEpisodeUpdater(getMockLogger(), configuration, getMockDbContextFactory());
-            await itunesEpisodeUpdater.UpdateDataAsync();
+            //var itunesEpisodeUpdater = new ItunesEpisodeUpdater(getMockLogger(), configuration, getMockDbContextFactory());
+            //await itunesEpisodeUpdater.UpdateDataAsync();
             
 
         }
