@@ -13,7 +13,7 @@ using static DevPodcast.Services.Core.Updaters.Extensions.EpisodeConstants;
 
 namespace DevPodcast.Services.Core.Updaters
 {
-    internal class ItunesEpisodeUpdater : Updater, IUpdater
+    public class ItunesEpisodeUpdater : Updater, IUpdater
     {
         public ItunesEpisodeUpdater(ILogger<ItunesEpisodeUpdater> logger, IConfiguration configuration, IDbContextFactory dbContextFactory)
             : base(logger,configuration, dbContextFactory)
@@ -40,7 +40,7 @@ namespace DevPodcast.Services.Core.Updaters
             }
         }
 
-        private static async Task GetEpisodeDataFromXml(XElement episode, Podcast podcast)
+        public static async Task GetEpisodeDataFromXml(XElement episode, Podcast podcast)
         {
             IEnumerable<XElement> childElements = episode.Elements().ToList();
             if (childElements.Any())
@@ -59,7 +59,7 @@ namespace DevPodcast.Services.Core.Updaters
             }
         }
 
-        private Task<IEnumerable<Podcast>> GetPodcasts()
+        public static Task<IEnumerable<Podcast>> GetPodcasts()
         {
             return Task.Run(() => {
 
@@ -74,7 +74,7 @@ namespace DevPodcast.Services.Core.Updaters
             });
         }
 
-        private static async Task CreateNewEpisode(IConfiguration config, XElement title,
+        public static async Task CreateNewEpisode(IConfiguration config, XElement title,
             Podcast podcast, IEnumerable<XElement> childElements)
         {
             Logger.LogInformation("Adding Episode: " + title.Value + ". " + podcast.Id);

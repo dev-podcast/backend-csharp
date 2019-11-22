@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using DevPodcast.Services.Core.Utils;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace DevPodcast.Services.Core.Test
@@ -29,10 +31,8 @@ namespace DevPodcast.Services.Core.Test
         [Fact]
         public async void When_Querying_the_feed_url_Then_get_episode_data_back()
         {
-            var itunesId = "";
             IEnumerable<XElement> episodes = await QueryService.QueryFeedUrl("http://getupandcode1.libsyn.com/rss");
-            
-           
+            Assert.NotEmpty(episodes);
         }
     }
 }

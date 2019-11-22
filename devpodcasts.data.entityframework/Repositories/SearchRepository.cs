@@ -18,10 +18,10 @@ namespace DevPodcast.Data.EntityFramework
             searchResult = new SearchResult();
 
             searchResult.Podcasts = await unitOfWork.PodcastRepository.GetAllAsync(p => p.Title.Contains(searchString)
-                                                                                         || p.Description.Contains(
-                                                                                             searchString) ||
-                                                                                         p.Artists.Contains(
-                                                                                             searchString));
+                                                                                        || p.Description.Contains(
+                                                                                            searchString) ||
+                                                                                        p.Artists.Contains(
+                                                                                            searchString));
 
             searchResult.Episodes =
                 await unitOfWork.EpisodeRepository.GetAllAsync(e => e.Title.Contains(searchString));
