@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DevPodcast.Data.EntityFramework;
 using DevPodcast.Domain.Entities;
 using DevPodcast.Services.Core.Interfaces;
 using DevPodcast.Services.Core.JsonObjects;
@@ -16,15 +17,17 @@ namespace DevPodcast.Services.Core.Updaters
 {
     public class BasePodcastUpdater : Updater, IUpdater
     {
+
+        private ApplicationDbContext Context { get; set; }
         public BasePodcastUpdater(ILogger<BasePodcastUpdater> logger, IConfiguration configuration, IDbContextFactory dbContextFactory)
             : base(logger, configuration, dbContextFactory)
         {
-            BasePodcasts = new List<BasePodcast>();
-            Tags = new List<Tag>();
+           
+            Context = dbContextFactory.CreateDbContext(Configuration);
         }
 
-        private ICollection<BasePodcast> BasePodcasts { get; }
-        private ICollection<Tag> Tags { get; }
+        private ICollection<BasePodcast> BasePodcasts { get;} = new List<BasePodcast>();
+        private ICollection<Tag> Tags { get; } = new List<Tag>();
 
         public Task UpdateDataAsync()
         {
@@ -66,8 +69,6 @@ namespace DevPodcast.Services.Core.Updaters
 
                             BasePodcasts.AddRange(basePodcastJsonObjects.Select(d => d.CreateBasePodcast()));
                         }
-
-                        var tag = Context.Tag.Where(x => x.Description == propertyName);
                     });
 
                     Save();
@@ -91,11 +92,11 @@ namespace DevPodcast.Services.Core.Updaters
 
         private void Save()
         {
-            //Insert initial tags
-            if (Tags.Any()) Context.Tag.AddRange(Tags);
-
             //Insert base podcasts
-            if (BasePodcasts.Any()) Context.BasePodcast.AddRange(BasePodcasts);
+            if (BasePodcasts.Any())
+            {
+                Context.BasePodcast.AddRange(BasePodcasts);
+            }
 
             Context.SaveChanges();
 

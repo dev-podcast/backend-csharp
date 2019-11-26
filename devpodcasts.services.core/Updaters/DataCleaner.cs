@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DevPodcast.Services.Core.Updaters
 {
-    internal class DataCleaner : Updater, IUpdater
+    public class DataCleaner : Updater, IUpdater
     {
         public DataCleaner(ILogger<DataCleaner> logger, IConfiguration configuration, IDbContextFactory dbContextFactory)
               : base(logger, configuration, dbContextFactory)
@@ -23,10 +23,10 @@ namespace DevPodcast.Services.Core.Updaters
 
         public async Task RemovePodcastsWithoutEpisodes()
         {
-            Context = DbContextFactory.CreateDbContext(Configuration);
-            var podcasts = Context.Podcast.Where(p => p.Episodes.Count == 0).ToList();
-            Context.Podcast.RemoveRange(podcasts);
-            await Context.SaveChangesAsync().ConfigureAwait(false);
+            var context  = DbContextFactory.CreateDbContext(Configuration);
+            var podcasts = context.Podcast.Where(p => p.Episodes.Count == 0).ToList();
+            context.Podcast.RemoveRange(podcasts);
+            await context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }

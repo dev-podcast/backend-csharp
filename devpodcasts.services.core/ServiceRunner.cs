@@ -1,10 +1,6 @@
 ﻿using DevPodcast.Services.Core.Interfaces;
-using DevPodcast.Services.Core.Updaters;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DevPodcast.Services.Core
@@ -21,30 +17,13 @@ namespace DevPodcast.Services.Core
 
         public Task Run(ICollection<IUpdater> updaters)
         {
-            if(!updaters.Any()) return new Task(() => {});
-            var tasks = new List<Task>();
-            foreach (var updater in updaters)
-                tasks.Add(updater.UpdateDataAsync());
-            
-            var allTasks = Task.WhenAll(tasks);
-            try
+            return Task.Run(() =>
             {
-                allTasks.Wait();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                throw;
-            }
-
-
-            if (allTasks.Exception != null)
-            {
-                _logger.LogError(allTasks.Exception, allTasks.Exception.Message);
-                throw allTasks.Exception;
-
-            }
-            return allTasks;
+                updaters.ForEach((updater) =>
+                {
+                    updater.UpdateDataAsync().Wait();
+                });
+            });
         }
     }
 }

@@ -1,16 +1,14 @@
-﻿using System;
-using DevPodcast.Data.EntityFramework;
+﻿using DevPodcast.Data.EntityFramework;
 using DevPodcast.Domain;
 using DevPodcast.Services.Core.Interfaces;
 using DevPodcast.Services.Core.Updaters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Amazon.SecretsManager;
-using Amazon.SecretsManager.Model;
 
 namespace DevPodcast.Services.Core
 {
@@ -39,6 +37,7 @@ namespace DevPodcast.Services.Core
                     itunesEpisodeUpdater,
                     dataCleaner
                 }).Wait();
+
             }).Wait();
         }
 

@@ -29,10 +29,13 @@ namespace DevPodcast.Services.Core.Updaters
                 {
                     Logger.LogInformation("********Updating Podcast Categories");
                     var dictionary = rootData.ToObject <IDictionary<string, JToken>>();
-                    
-                    dictionary.ForEach(async (item) => 
-                        await ProcessCategory(item).ConfigureAwait(false));
-               
+
+                    var tasks = new List<Task>();
+                    foreach (var kvp in dictionary)
+                        tasks.Add(ProcessCategory(kvp));
+
+                    await Task.WhenAll(tasks).ConfigureAwait(false);
+
                     Logger.LogInformation("Podcast Categories Update DONE!");
                 }
 

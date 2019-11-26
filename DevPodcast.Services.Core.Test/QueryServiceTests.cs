@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
 using DevPodcast.Services.Core.Utils;
-using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Xml.Linq;
 using Xunit;
 
 namespace DevPodcast.Services.Core.Test

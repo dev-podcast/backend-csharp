@@ -1,16 +1,8 @@
-﻿using Xunit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using DevPodcast.Data.EntityFramework;
-using DevPodcast.Services.Core.Interfaces;
-using DevPodcast.Services.Core.Utils;
-using DevPodcast.Services.Core.Updaters;
+﻿using DevPodcast.Services.Core.Updaters;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Xunit;
 
 namespace DevPodcast.Services.Core.Test
 {
@@ -43,8 +35,6 @@ namespace DevPodcast.Services.Core.Test
             // await itunesEpisodeUpdater.UpdateDataAsync();
             //var itunesEpisodeUpdater = new ItunesEpisodeUpdater(getMockLogger(), configuration, getMockDbContextFactory());
             //await itunesEpisodeUpdater.UpdateDataAsync();
-            
-
         }
     }
 }
