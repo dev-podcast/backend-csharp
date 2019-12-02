@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Net;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,52 @@ namespace DevPodcast.Services.Core
             } while (remainingTries > 0);
 
             return new JArray();
+        }
+
+
+        public static IObservable<JArray> QueryItunesIdObservable(string itunesId)
+        {
+            return Observable.StartAsync(async () =>
+            {
+                var maxTries = 3;
+                var remainingTries = maxTries;
+                do
+                {
+                    --remainingTries;
+                    try
+                    {
+                        Thread.Sleep(2000);
+                        var url = BASE_LOOKUP_URL + itunesId;
+                        var request = (HttpWebRequest)WebRequest.Create(url);
+
+                        var response = await request.GetResponseAsync().ConfigureAwait(false);
+
+                        if (response == null) return new JArray();
+
+                        if (response is HttpWebResponse wResponse && wResponse.StatusCode == HttpStatusCode.OK)
+                            using (var stream = wResponse.GetResponseStream())
+                            {
+                                using (var raw = new StreamReader(stream, Encoding.UTF8))
+                                {
+                                    var json = JObject.Parse(raw.ReadToEnd());
+                                    if (json != null)
+                                    {
+                                        var resultCount = json["resultCount"].ToString();
+                                        if (resultCount != "0") return JArray.Parse(json["results"].ToString());
+                                    }
+                                }
+                            }
+
+                        return new JArray();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                } while (remainingTries > 0);
+
+                return new JArray();
+            });
         }
 
 

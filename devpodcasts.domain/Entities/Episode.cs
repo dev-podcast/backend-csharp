@@ -22,7 +22,6 @@ namespace DevPodcast.Domain.Entities
         public DateTime CreatedDate { get; set; }
         public string ImageUrl { get; set; }
         public string SourceUrl { get; set; }
-
         public Podcast Podcast { get; set; }
         public ICollection<EpisodeTag> EpisodeTags { get; set; }
         public ICollection<EpisodeCategory> EpisodeCategories { get; set; }

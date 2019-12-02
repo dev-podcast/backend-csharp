@@ -22,6 +22,7 @@ namespace DevPodcast.Services.Core
                 updaters.ForEach((updater) =>
                 {
                     updater.UpdateDataAsync().Wait();
+                    updater.Dispose();
                 });
             });
         }

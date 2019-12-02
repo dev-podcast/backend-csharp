@@ -1,14 +1,14 @@
-﻿using DevPodcast.Data.EntityFramework;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using DevPodcast.Data.EntityFramework;
 using DevPodcast.Domain;
 using DevPodcast.Services.Core.Interfaces;
 using DevPodcast.Services.Core.Updaters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace DevPodcast.Services.Core
 {
@@ -29,7 +29,7 @@ namespace DevPodcast.Services.Core
 
                 var consoleApp = provider.GetService<ServiceRunner>();
 
-                consoleApp.Run(new List<IUpdater>()
+                consoleApp.Run(new List<IUpdater>
                 {
                     podCategoriesUpdater,
                     basePodcastUpdater,
@@ -37,19 +37,18 @@ namespace DevPodcast.Services.Core
                     itunesEpisodeUpdater,
                     dataCleaner
                 }).Wait();
-
             }).Wait();
         }
 
-     
+
         public static IConfiguration LoadConfiguration()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{environmentName}.json", optional:true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
                 .AddSecretsManager();
             return builder.Build();
         }

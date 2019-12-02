@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +7,7 @@ using DevPodcast.Data.EntityFramework;
 using DevPodcast.Domain.Entities;
 using DevPodcast.Services.Core.Interfaces;
 using DevPodcast.Services.Core.Updaters.Extensions;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using static DevPodcast.Services.Core.Updaters.Extensions.EpisodeConstants;
 
@@ -15,14 +15,16 @@ namespace DevPodcast.Services.Core.Updaters
 {
     public class ItunesEpisodeUpdater : Updater, IUpdater
     {
-        public ItunesEpisodeUpdater(ILogger<ItunesEpisodeUpdater> logger, IConfiguration configuration, IDbContextFactory dbContextFactory)
-            : base(logger,configuration, dbContextFactory)
+        public ItunesEpisodeUpdater(ILogger<ItunesEpisodeUpdater> logger, IDbContextFactory dbContextFactory)
+            : base(logger, dbContextFactory)
         {
+            Context = dbContextFactory.CreateDbContext();
         }
 
-        private static ICollection<Episode> episodesToAdd;
-        private static ICollection<EpisodeTag> episodeTags;
-        private static ICollection<Tag> tagsToAdd;
+        private static readonly IDictionary<string, Episode> Episodes = new Dictionary<string, Episode>();
+        private static readonly IDictionary<string, ICollection<string>> EpisodeTags = new Dictionary<string, ICollection<string>>();
+        private static readonly ICollection<Tag> Tags = new List<Tag>();     
+        private static ApplicationDbContext Context { get; set; }
 
         public async Task UpdateDataAsync()
         {
@@ -30,52 +32,86 @@ namespace DevPodcast.Services.Core.Updaters
 
             foreach (var podcast in allPodcasts)
             {
-                var context = DbContextFactory.CreateDbContext(Configuration);
-
-                podcast.PodcastTags = context.PodcastTag.Where(x => x.PodcastId == podcast.Id).ToList(); 
-
-                 context.Dispose();
-               
-               Logger.LogInformation("Updating episodes for podcast: " + podcast.Title);
-               IEnumerable<XElement> episodes = await QueryService.QueryFeedUrl(podcast.FeedUrl).ConfigureAwait(false);
+                Logger.LogInformation("Updating episodes for podcast: " + podcast.Title);
+                IEnumerable<XElement> episodes = await QueryService.QueryFeedUrl(podcast.FeedUrl).ConfigureAwait(false);
                 foreach (var episode in episodes)
                     await GetEpisodeDataFromXml(episode, podcast).ConfigureAwait(false);
+            }
+            CommitData().Wait();
+
+            Dispose();
+        }
+
+        private async Task CommitData()
+        {
+            if (Episodes.Any())
+            {
+                await Context.Episode.AddRangeAsync(Episodes.Values).ConfigureAwait(false);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            if (Tags.Any())
+            {
+                await Context.Tag.AddRangeAsync(Tags).ConfigureAwait(false);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            if (EpisodeTags.Any())
+            {
+                await SaveTagsAndEpisodeTags(Episodes, EpisodeTags).ConfigureAwait(false);
+            }
+        }
+
+        private static async Task SaveTagsAndEpisodeTags(IDictionary<string, Episode> episodes, IDictionary<string, ICollection<string>> tagsToMap)
+        {
+            var updatedTags = new List<EpisodeTag>();
+            foreach (var keyValue in episodes)
+            {
+                var tempId = keyValue.Key;
+                var episode = keyValue.Value;
+                var tagDescription = tagsToMap[tempId];
+
+
+                var matchingTags = Context.Tag
+                    .Where(x => tagDescription.Contains(x.Description)).ToList();
+
+                foreach(var matchingTag in matchingTags)
+                    updatedTags.Add(new EpisodeTag(){EpisodeId = episode.Id, TagId = matchingTag.Id});
 
             }
+
+            await Context.EpisodeTag.AddRangeAsync(updatedTags).ConfigureAwait(false);
+            await Context.SaveChangesAsync().ConfigureAwait(false);
+
         }
 
         public static async Task GetEpisodeDataFromXml(XElement episode, Podcast podcast)
         {
-            var context = DbContextFactory.CreateDbContext(Configuration);
             IEnumerable<XElement> childElements = episode.Elements().ToList();
             if (childElements.Any())
             {
                 var title = childElements.FirstOrDefault(x => x.Name == TitleElementName);
 
                 if (title != null)
-                {
-                    var existing = context.Episode.FirstOrDefault(x => x.Title == title.Value);
-
-                    if (existing == null)
-                    {
+                    if (!CheckForExistingEpisode(title))
                         await CreateNewEpisode(title, podcast, childElements).ConfigureAwait(false);
-                    }
-                }
             }
         }
 
-        public static Task<IEnumerable<Podcast>> GetPodcasts()
+        private static bool CheckForExistingEpisode(XElement title)
         {
-            return Task.Run(() => {
+            return Context.Episode.Any(x => x.Title == title.Value);
+        }
 
-                    var context = DbContextFactory.CreateDbContext(Configuration);
-                    var pods = context.Podcast.Where(x => true).ToList();
-                    var enumerable = pods.Select(p =>
-                    {
-                        p.PodcastTags = context.PodcastTag.Where(x => x.PodcastId == p.Id).ToList();
-                        return p;
-                    });
-                    return enumerable;
+        public static Task<List<Podcast>> GetPodcasts()
+        {
+            return Task.Run(() =>
+            {
+                return Context.Podcast
+                    .Where(x => true)
+                    .Include(p => p.PodcastTags)
+                    .Include("PodcastTags.Tag")
+                    .ToList(); ;
             });
         }
 
@@ -83,8 +119,6 @@ namespace DevPodcast.Services.Core.Updaters
             Podcast podcast, IEnumerable<XElement> childElements)
         {
             Logger.LogInformation("Adding Episode: " + title.Value + ". " + podcast.Id);
-
-            var context = DbContextFactory.CreateDbContext(Configuration);
 
             var episode = new EpisodeBuilder();
             var children = childElements.ToList();
@@ -121,17 +155,16 @@ namespace DevPodcast.Services.Core.Updaters
                 .AddAudioDuration(itunesDuration, duration)
                 .Build();
 
-            context.Episode.Add(newEpisode);
+            var tempId = Guid.NewGuid().ToString();
 
-            await context.SaveChangesAsync().ConfigureAwait(false);
-            context.Dispose();
+            Episodes.Add(tempId, newEpisode);
 
             Logger.LogInformation("Added Episode: " + newEpisode.Title);
 
             var tagsFromXml = GetTagsFromXml(keywords, category);
 
             Logger.LogInformation("Checking for new tags for episode: " + newEpisode.Title);
-            await CreateTags(newEpisode, tagsFromXml, podcast.PodcastTags).ConfigureAwait(false);
+            await CreateTags(newEpisode, tagsFromXml, podcast.PodcastTags, tempId).ConfigureAwait(false);
         }
 
         private static ICollection<string> GetTagsFromXml(XElement keywords, XElement category)
@@ -152,44 +185,70 @@ namespace DevPodcast.Services.Core.Updaters
             return tagsFromXml;
         }
 
-        private static async Task CreateTags(Episode newEpisode, IEnumerable<string> tagsFromXml, IEnumerable<PodcastTag> parentTags)
+        private static Task CreateTags(Episode newEpisode, IEnumerable<string> tagsFromXml,
+            IEnumerable<PodcastTag> parentTags, string tempId)
         {
-            var newTags = new List<Tag>();
-            var context = DbContextFactory.CreateDbContext(Configuration);
-           foreach (var tagDescription in tagsFromXml)
-           {
-               var existingTag = context.Tag.Any(x => x.Description == tagDescription);
-               if (!existingTag)
-               {
-                   var newTag = new Tag() { Description = tagDescription };
-                   newTags.Add(newTag);
-               }
-            }
-
-            await context.Tag.AddRangeAsync(newTags).ConfigureAwait(false);
-            await context.SaveChangesAsync().ConfigureAwait(false);
-
-            foreach (var tag in newTags)
-                newEpisode.EpisodeTags.Add(new EpisodeTag() { EpisodeId = newEpisode.Id, TagId = tag.Id });
-
-            await context.SaveChangesAsync().ConfigureAwait(false);
-
-            var listParentTags = parentTags.ToList();
-            if (listParentTags.Any())
+            return Task.Run(() =>
             {
-                foreach (var parentTag in listParentTags)
-                {
-                    var exists =
-                        newEpisode.EpisodeTags.Any(t => t.TagId == parentTag.TagId);
-                    if (!exists)
-                        newEpisode.EpisodeTags.Add(new EpisodeTag
-                            { EpisodeId = newEpisode.Id, TagId = parentTag.TagId });
-                }
-            }
 
-            await context.SaveChangesAsync().ConfigureAwait(false);
-            context.Dispose();
-            Logger.LogInformation("Saved tags for episode: " + newEpisode.Title);
+                var episodeTags = new List<string>();
+                var existingTags = new List<Tag>();
+                foreach (var tagDescription in tagsFromXml)
+                {
+                    if (Tags.All(x => x.Description != tagDescription))
+                    {
+                        var existingTag = Context.Tag.FirstOrDefault(x => x.Description == tagDescription);
+                        if (existingTag == null)
+                            Tags.Add(new Tag {Description = tagDescription});
+                        else
+                            existingTags.Add(existingTag);
+                    }
+                }
+
+                Tags.ForEach(tag =>
+                {
+                    var tagExists = CheckForExistingEpisodeTag(newEpisode, tag);
+                    if(!tagExists && !episodeTags.Contains(tag.Description))
+                        episodeTags.Add(tag.Description);
+                });
+
+                existingTags.ForEach(tag =>
+                {
+                    var tagExists = CheckForExistingEpisodeTag(newEpisode, tag);
+                    if (!tagExists && !episodeTags.Contains(tag.Description))
+                        episodeTags.Add(tag.Description);
+                });
+
+                var listParentTags = parentTags.ToList();
+                foreach (var parentTag in from parentTag
+                        in listParentTags
+                        let exists = newEpisode.EpisodeTags.Any(t => t.TagId == parentTag.TagId)
+                        where !exists
+                        select parentTag)
+                {
+                    var tagExists = CheckForExistingEpisodeTag(newEpisode, parentTag.Tag);
+                    if (!tagExists && !episodeTags.Contains(parentTag.Tag?.Description))
+
+                        episodeTags.Add(parentTag?.Tag?.Description);
+                }
+
+                EpisodeTags.Add(tempId, episodeTags);
+
+                Logger.LogInformation("Saved tags for episode: " + newEpisode.Title);
+            });
+        }
+
+
+        private static bool CheckForExistingEpisodeTag(Episode episode, Tag tag)
+        {
+            var tagExists = episode.EpisodeTags.Any(t => t.Tag?.Description == tag?.Description);
+            return tagExists;
+        }
+
+
+        public void Dispose()
+        {
+            Context.Dispose();
         }
     }
 }

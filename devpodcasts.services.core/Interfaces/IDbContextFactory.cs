@@ -5,6 +5,8 @@ namespace DevPodcast.Services.Core.Interfaces
 {
     public interface IDbContextFactory
     {
-        ApplicationDbContext CreateDbContext(IConfiguration configuration);
+        IConfiguration Configuration { get; set; }
+
+        ApplicationDbContext CreateDbContext();
     }
 }
