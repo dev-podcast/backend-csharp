@@ -8,11 +8,18 @@ namespace DevPodcast.Services.Core
 {
     public class DbContextFactory : IDbContextFactory
     {
-        public ApplicationDbContext CreateDbContext(IConfiguration configuration)
+        public IConfiguration Configuration { get; set; }
+
+        public DbContextFactory(IConfiguration configuration)
         {
-            if (configuration == null) return null;
-            string connStringKey = configuration.GetSection("ConnectionStrings").GetSection("PodcastDb").Value;
-            var connString = configuration.GetSection(connStringKey).GetValue<string>(connStringKey);
+            Configuration = configuration;
+        }
+
+        public ApplicationDbContext CreateDbContext()
+        {
+            if (Configuration == null) return null;
+            string connStringKey = Configuration.GetSection("ConnectionStrings").GetSection("PodcastDb").Value;
+            var connString = Configuration.GetSection(connStringKey).GetValue<string>(connStringKey);
             return new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseSqlServer(connString).Options);
         }

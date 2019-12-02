@@ -24,7 +24,6 @@ namespace DevPodcast.Domain.Entities
         public DateTime CreatedDate { get; set; }
         public string Artists { get; set; } = string.Empty;
         public string ItunesId { get; set; }
-
         public ICollection<Episode> Episodes { get; set; }
         public ICollection<PodcastTag> PodcastTags { get; set; }
         public ICollection<PodcastCategory> PodcastCategories { get; set; }

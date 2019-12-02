@@ -88,6 +88,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.0" />
+    <PackageReference Include="System.Reactive" Version="4.2.0" />
+    <PackageReference Include="System.Reactive.Core" Version="4.2.0" />
+    <PackageReference Include="System.Reactive.Linq" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
