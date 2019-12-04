@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DevPodcast.Domain;
 using DevPodcast.Domain.Entities;
+using DevPodcast.Domain.Interfaces;
 using DevPodcast.Server.ViewModels;
 
 namespace DevPodcast.Server.Controllers
@@ -14,6 +15,8 @@ namespace DevPodcast.Server.Controllers
     {
         private IMapper _mapper { get; }
         private IUnitOfWork _unitOfWork { get; }
+        private IPodcastRepository _podcastRepository { get; }
+        private IPodcastTagRepository _podcastTagRepository { get; }
 
         public PodcastController(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -28,12 +31,6 @@ namespace DevPodcast.Server.Controllers
             var model = _mapper.Map<Podcast, PodcastViewModel>(podcast);
             return Ok(model);
         }
-
-        //[Route("api/podcast/{ids}")]
-        //public async Task<Podcast> Get(int[] ids)
-        //{
-        //    return await _unitOfWork.PodcastRepository.GetAsync(x => ids.Contains(x.Id));
-        //}
 
         [Route("api/podcast")]
         public async Task<IActionResult> Get()
