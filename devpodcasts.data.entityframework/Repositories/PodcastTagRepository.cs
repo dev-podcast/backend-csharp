@@ -5,7 +5,7 @@ using DevPodcast.Domain.Entities;
 using DevPodcast.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevPodcast.Data.EntityFramework
+namespace DevPodcast.Data.EntityFramework.Repositories
 {
     internal class PodcastTagRepository : Repository<PodcastTag>, IPodcastTagRepository
     {

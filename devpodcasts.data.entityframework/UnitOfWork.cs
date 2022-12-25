@@ -13,21 +13,21 @@ namespace DevPodcast.Data.EntityFramework
         }
 
         public IPodcastRepository PodcastRepository =>
-            _podcastRepository ?? (_podcastRepository = new PodcastRepository(_context));
+            _podcastRepository ??= new PodcastRepository(_context);
 
         public IBasePodcastRepository BasePodcastRepository =>
-            _basePodcastRepository ?? (_basePodcastRepository = new BasePodcastRepository(_context));
+            _basePodcastRepository ??= new BasePodcastRepository(_context);
 
         public IEpisodeRepository EpisodeRepository =>
-            _episodeRepository ?? (_episodeRepository = new EpisodeRepository(_context));
+            _episodeRepository ??= new EpisodeRepository(_context);
 
-        public ITagRepository TagRepository => _tagRepository ?? (_tagRepository = new TagRepository(_context));
+        public ITagRepository TagRepository => _tagRepository ??= new TagRepository(_context);
 
         public ICategoryRepository CategoryRepository =>
-            _categoryRepository ?? (_categoryRepository = new CategoryRepository(_context));
+            _categoryRepository ??= new CategoryRepository(_context);
 
         public IEpisodeTagRepository EpisodeTagRepository =>
-            _episodeTagRepository ?? (_episodeTagRepository = new EpisodeTagRepository(_context));
+            _episodeTagRepository ??= new EpisodeTagRepository(_context);
 
         public IPodcastTagRepository PodcastTagRepository =>
             _podcastTagRepository ?? (_podcastTagRepository = new PodcastTagRepository(_context));

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using DevPodcast.Domain;
 
-namespace DevPodcast.Server.Controllers
+namespace DevPodcast.Server.Core.Controllers
 {
     [Produces("application/json")]
     //[Route("api/Search")]

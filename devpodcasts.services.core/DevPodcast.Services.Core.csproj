@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RuntimeIdentifiers>ubuntu.18.04-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
@@ -28,11 +28,6 @@
     <Content Include="appsettings.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 
@@ -67,7 +62,6 @@
     <PackageReference Include="AWSSDK.SecretsManager" Version="3.3.101.51" />
     <PackageReference Include="AWSSDK.SecretsManager.Caching" Version="1.0.2" />
     <PackageReference Include="Kralizek.Extensions.Configuration.AWSSecretsManager" Version="1.2.0" />
-    <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -81,7 +75,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.10" />
     <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

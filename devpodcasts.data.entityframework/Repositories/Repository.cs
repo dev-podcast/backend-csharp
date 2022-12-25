@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DevPodcast.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevPodcast.Data.EntityFramework
+namespace DevPodcast.Data.EntityFramework.Repositories
 {
     internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {

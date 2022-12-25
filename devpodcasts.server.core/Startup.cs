@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace DevPodcast.Server.core
 {
@@ -26,10 +27,8 @@ namespace DevPodcast.Server.core
             services.AddCors();
             services.AddAutoMapper();
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(
-                options => options.SerializerSettings.ReferenceLoopHandling
-                        = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                .AddNewtonsoftJson(
+                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);            
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 var connStringKey = Configuration.GetSection("ConnectionStrings").GetValue<string>("PodcastDb");
@@ -47,8 +46,9 @@ namespace DevPodcast.Server.core
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-                loggerFactory.AddDebug(LogLevel.Trace); // ⇦ you're not passing the LogLevel!
+                //loggerFactory.
+                //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+                //loggerFactory.AddDebug(LogLevel.Trace); // ⇦ you're not passing the LogLevel!
             }
             else
             {
@@ -56,20 +56,20 @@ namespace DevPodcast.Server.core
             }
 
 
-            loggerFactory.AddLog4Net();
+            //loggerFactory.AddLog4Net();
 
             app.UseCors(builder => builder
-
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
 
             app.UseHttpsRedirection();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute("default", "{controller=Podcast}/{action=recent}");
-            });
+
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute("default", "{controller=Podcast}/{action=recent}");
+            //});
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace DevPodcast.Server.ViewModels.Mappings
+namespace DevPodcast.Server.Core.ViewModels.Mappings
 {
     public class AutoMapperConfiguration
     {

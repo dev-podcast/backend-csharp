@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DevPodcast.Domain;
 using DevPodcast.Domain.Entities;
-using DevPodcast.Server.ViewModels;
+using DevPodcast.Server.Core.ViewModels;
 
 namespace DevPodcast.Server.Controllers
 {

@@ -5,7 +5,7 @@ using DevPodcast.Domain.Entities;
 using DevPodcast.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevPodcast.Data.EntityFramework
+namespace DevPodcast.Data.EntityFramework.Repositories
 {
     internal class PodcastCategoryRepository : Repository<PodcastCategory>, IPodcastCategoryRepository
     {
@@ -19,6 +19,7 @@ namespace DevPodcast.Data.EntityFramework
                 join cat in _context.PodcastCategory on pod.Id equals cat.PodcastId
                 where cat.CategoryId == categoryId
                 select pod).ToList();
+
         }
 
         public Task<List<Podcast>> GetByCategoryIdAsync(int categoryId)
