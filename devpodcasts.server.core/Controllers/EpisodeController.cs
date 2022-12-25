@@ -8,8 +8,8 @@ using DevPodcast.Server.Core.ViewModels;
 
 namespace DevPodcast.Server.Core.Controllers
 {
-    [Produces("application/json")]
-    //[Route("api/Episode")]
+    [ApiVersion("1")]
+    [ApiController]
     public class EpisodeController : Controller
     {
         private IMapper _mapper { get; }
@@ -21,16 +21,18 @@ namespace DevPodcast.Server.Core.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/episode/{showId}/{episodeId}")]
-        public async Task<IActionResult> Get(int showId, int episodeId)
+        [HttpGet]
+        [Route("v1/{showId}/{episodeId}")]
+        public async Task<IActionResult> GetEpisode(int showId, int episodeId)
         {
             var episode = await _unitOfWork.EpisodeRepository.GetAsync(x => x.PodcastId == showId && x.Id == episodeId);
             var model = _mapper.Map<Episode, EpisodeViewModel>(episode);
             return Ok(model);
         }
 
-        [Route("api/episode/{showId}")]
-        public async Task<IActionResult> Get(int showId)
+        [HttpGet]
+        [Route("v1/all/{showId}")]
+        public async Task<IActionResult> GetAllEpisodes(int showId)
         {
             var episodes = await _unitOfWork.EpisodeRepository.GetAllAsync(x => x.PodcastId == showId);
             var model = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episodes);
@@ -38,7 +40,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("api/episode/recent/{showId}")]
+        [Route("v1/recent/{showId}")]
         public async Task<IActionResult> Recent(int showId)
         {
             var episodes = await _unitOfWork.EpisodeRepository.GetRecentAsync(showId, 15);
@@ -47,7 +49,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("api/episode/recent/{showId}/{limit}")]
+        [Route("v1/recent/{showId}/{limit}")]
         public async Task<IActionResult> Recent(int showId, int limit)
         {
             var episodes = await _unitOfWork.EpisodeRepository.GetRecentAsync(showId, limit);

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29424.173
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevPodcast.Domain", "devpodcasts.domain\DevPodcast.Domain.csproj", "{B34E67BF-2DDF-413C-87E6-8FCC3DF5FE6F}"
 EndProject
@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevPodcast.Services.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevPodcast.Server.Core", "devpodcasts.server.core\DevPodcast.Server.Core.csproj", "{908C3A8F-D623-4547-A6F3-431F5E804936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevPodcast.Services.Core.Test", "DevPodcast.Services.Core.Test\DevPodcast.Services.Core.Test.csproj", "{82621BC1-1729-4FA3-9341-BB99B42C4E6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevPodcast.Services.Core.Test", "DevPodcast.Services.Core.Test\DevPodcast.Services.Core.Test.csproj", "{82621BC1-1729-4FA3-9341-BB99B42C4E6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevPodcast.Server.Core.Test", "DevPodcast.Server.Core.Test\DevPodcast.Server.Core.Test.csproj", "{EB023767-57DA-4228-818A-4A3ED60E6556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevPodcast.Server.Core.Test", "DevPodcast.Server.Core.Test\DevPodcast.Server.Core.Test.csproj", "{EB023767-57DA-4228-818A-4A3ED60E6556}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{AEA8A04B-C854-438F-886F-71867DC2D143}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEA8A04B-C854-438F-886F-71867DC2D143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEA8A04B-C854-438F-886F-71867DC2D143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEA8A04B-C854-438F-886F-71867DC2D143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEA8A04B-C854-438F-886F-71867DC2D143}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

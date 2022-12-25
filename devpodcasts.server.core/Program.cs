@@ -23,7 +23,6 @@ namespace DevPodcast.Server.core
                 {
                     config.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json",
                         optional: true, reloadOnChange: true);
-                    config.AddSecretsManager();
                 })
                 .UseStartup<Startup>();
     }

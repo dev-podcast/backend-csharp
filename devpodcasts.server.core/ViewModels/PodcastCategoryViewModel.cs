@@ -1,6 +1,4 @@
-﻿using DevPodcast.Server.ViewModels;
-
-namespace DevPodcast.Server.Core.ViewModels
+﻿namespace DevPodcast.Server.Core.ViewModels
 {
     public class PodcastCategoryViewModel
     {

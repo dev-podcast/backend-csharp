@@ -5,8 +5,8 @@ using DevPodcast.Domain;
 
 namespace DevPodcast.Server.Core.Controllers
 {
-    [Produces("application/json")]
-    //[Route("api/Search")]
+    [ApiVersion("1")]
+    [ApiController]
     public class SearchController : Controller
     {
         private IMapper _mapper { get; }
@@ -18,7 +18,8 @@ namespace DevPodcast.Server.Core.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/search/{searchString}")]
+        [HttpGet]
+        [Route("v1/search/{searchString}")]
         public async Task<IActionResult> Get(string searchString)
         {
             var result = await _unitOfWork.SearchRepository.GetSearchResultAsync(_unitOfWork, searchString);

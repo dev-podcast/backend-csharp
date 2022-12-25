@@ -1,6 +1,5 @@
 ﻿using DevPodcast.Data.EntityFramework;
 using DevPodcast.Services.Core.Interfaces;
-using Kralizek.Extensions.Configuration.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 

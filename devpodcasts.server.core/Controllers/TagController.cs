@@ -8,7 +8,8 @@ using DevPodcast.Server.Core.ViewModels;
 
 namespace DevPodcast.Server.Core.Controllers
 {
-    [Produces("application/json")]
+    [ApiVersion("1")]
+    [ApiController]
     public class TagController : Controller
     {
         private IMapper _mapper { get; }
@@ -20,7 +21,8 @@ namespace DevPodcast.Server.Core.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/tag/")]
+        [HttpGet]
+        [Route("v1/tag/all")]
         public async Task<IActionResult> Get()
         {
             var tags = await _unitOfWork.TagRepository.GetAllAsync(_ => true);
@@ -28,7 +30,8 @@ namespace DevPodcast.Server.Core.Controllers
             return Ok(model);
         }
 
-        [Route("api/tag/{tagId}")]
+        [HttpGet]
+        [Route("v1/tag/{tagId}")]
         public async Task<IActionResult> Get(int tagId)
         {
             var tag = await _unitOfWork.TagRepository.GetAsync(t => t.Id == tagId);
@@ -36,7 +39,8 @@ namespace DevPodcast.Server.Core.Controllers
             return Ok(model);
         }
 
-        [Route("api/tag/{tagName}")]
+        [HttpGet]
+        [Route("v1/tag/{tagName}")]
         public async Task<IActionResult> Get(string tagName)
         {
             var tag = await _unitOfWork.TagRepository.GetAsync(t => t.Description == tagName);
@@ -44,7 +48,8 @@ namespace DevPodcast.Server.Core.Controllers
             return Ok(model);
         }
 
-        [Route("api/tag/id/search/{tagId}/{type}")]
+        [HttpGet]
+        [Route("v1/tag/id/search/{tagId}/{type}")]
         public async Task<IActionResult> Get(int tagId, int type)
         {
             switch (type)
@@ -70,7 +75,8 @@ namespace DevPodcast.Server.Core.Controllers
             }
         }
 
-        [Route("api/tag/name/search/{tagName}/{type}")]
+        [HttpGet]
+        [Route("v1/tag/name/search/{tagName}/{type}")]
         public async Task<IActionResult> Get(string tagName, int type)
         {
             switch (type)

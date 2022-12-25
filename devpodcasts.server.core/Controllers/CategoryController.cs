@@ -8,8 +8,8 @@ using DevPodcast.Server.Core.ViewModels;
 
 namespace DevPodcast.Server.Core.Controllers
 {
-    [Produces("application/json")]
-    //[Route("api/Category")]
+    [ApiVersion("1")]
+    [ApiController]
     public class CategoryController : Controller
     {
         private IMapper _mapper { get; }
@@ -21,8 +21,9 @@ namespace DevPodcast.Server.Core.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/category/")]
-        public async Task<IActionResult> Get()
+        [HttpGet]
+        [Route("v1/category/all")]
+        public async Task<IActionResult> GetAll()
         {
             var category = await _unitOfWork.CategoryRepository.GetAllAsync(_ => true);
 
@@ -30,8 +31,9 @@ namespace DevPodcast.Server.Core.Controllers
             return Ok(model);
         }
 
-        [Route("api/category/{categoryId}")]
-        public async Task<IActionResult> Get(int categoryId)
+        [HttpGet]
+        [Route("v1/category/{categoryId}")]
+        public async Task<IActionResult> GetById(int categoryId)
         {
             var category = await _unitOfWork.CategoryRepository.GetAsync(t => t.Id == categoryId);
 
@@ -39,8 +41,9 @@ namespace DevPodcast.Server.Core.Controllers
             return Ok(model);
         }
 
-        [Route("api/category/{categoryName}")]
-        public async Task<IActionResult> Get(string categoryName)
+        [HttpGet]
+        [Route("v1/category{categoryName}")]
+        public async Task<IActionResult> GetByName(string categoryName)
         {
             var category = await _unitOfWork.CategoryRepository.GetAsync(t => t.Description == categoryName);
 
@@ -48,8 +51,9 @@ namespace DevPodcast.Server.Core.Controllers
             return Ok(model);
         }
 
-        [Route("api/category/id/search/{categoryId}/{type}")]
-        public async Task<IActionResult> Get(int categoryId, int type)
+        [HttpGet]
+        [Route("v1/category/search/{categoryId}/{type}")]
+        public async Task<IActionResult> GetByIdAndType(int categoryId, int type)
         {
             SearchResult searchResult = new SearchResult();
             var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == categoryId);
@@ -76,8 +80,9 @@ namespace DevPodcast.Server.Core.Controllers
             }
         }
 
-        [Route("api/category/name/search/{categoryName}/{type}")]
-        public async Task<IActionResult> Get(string categoryName, int type)
+        [HttpGet]
+        [Route("v1/category/search/{categoryName}/{type}")]
+        public async Task<IActionResult> GetByNameAndType(string categoryName, int type)
         {
             SearchResult searchResult = new SearchResult();
             var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Description == categoryName);

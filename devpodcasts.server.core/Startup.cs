@@ -3,12 +3,10 @@ using DevPodcast.Data.EntityFramework;
 using DevPodcast.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace DevPodcast.Server.core
 {
@@ -24,11 +22,14 @@ namespace DevPodcast.Server.core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen();
             services.AddCors();
             services.AddAutoMapper();
             services.AddMvc()
                 .AddNewtonsoftJson(
-                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);            
+                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);    
+            
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 var connStringKey = Configuration.GetSection("ConnectionStrings").GetValue<string>("PodcastDb");
@@ -46,9 +47,8 @@ namespace DevPodcast.Server.core
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //loggerFactory.
-                //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-                //loggerFactory.AddDebug(LogLevel.Trace); // ⇦ you're not passing the LogLevel!
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
             else
             {
@@ -58,18 +58,12 @@ namespace DevPodcast.Server.core
 
             //loggerFactory.AddLog4Net();
 
-            app.UseCors(builder => builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
+            app.UseCors();
+
+         
 
             app.UseHttpsRedirection();
 
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute("default", "{controller=Podcast}/{action=recent}");
-            //});
         }
     }
 }
