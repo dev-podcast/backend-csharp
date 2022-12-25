@@ -5,8 +5,9 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DevPodcast.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace DevPodcast.Data.EntityFramework
+namespace DevPodcast.Data.EntityFramework.Repositories
 {
     internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
@@ -25,7 +26,7 @@ namespace DevPodcast.Data.EntityFramework
             Set.Add(entity);
         }
 
-        public Task AddAsync(TEntity entity)
+        public ValueTask<EntityEntry<TEntity>> AddAsync(TEntity entity)
         {
             return Set.AddAsync(entity);
         }

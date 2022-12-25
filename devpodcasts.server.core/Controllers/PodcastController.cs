@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DevPodcast.Domain;
 using DevPodcast.Domain.Entities;
-using DevPodcast.Server.ViewModels;
+using DevPodcast.Server.Core.ViewModels;
 
 namespace DevPodcast.Server.Controllers
 {
-    [Produces("application/json")]
-    // [Route("api/Podcast")]
+    [ApiVersion("1")]
+    [ApiController]
     public class PodcastController : Controller
     {
         private IMapper _mapper { get; }
@@ -21,7 +22,8 @@ namespace DevPodcast.Server.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/podcast/{id}")]
+        [HttpGet]
+        [Route("v1/{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var podcast = await _unitOfWork.PodcastRepository.GetAsync(x => x.Id == id);
@@ -35,15 +37,17 @@ namespace DevPodcast.Server.Controllers
         //    return await _unitOfWork.PodcastRepository.GetAsync(x => ids.Contains(x.Id));
         //}
 
-        [Route("api/podcast")]
-        public async Task<IActionResult> Get()
+        [HttpGet]
+        [Route("v1/podcast/all")]
+        public async Task<IActionResult> GetAll()
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetAllAsync(_ => true);
             var model = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcasts);
             return Ok(model);
         }
 
-        [Route("api/podcast/recent")]
+        [HttpGet]
+        [Route("v1/podcast/recent")]
         public async Task<IActionResult> Recent()
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetRecentAsync(15);
@@ -51,7 +55,8 @@ namespace DevPodcast.Server.Controllers
             return Ok(model);
         }
 
-        [Route("api/podcast/recent/{limit}")]
+        [HttpGet]
+        [Route("v1/podcast/recent/{limit}")]
         public async Task<IActionResult> Recent(int limit)
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetRecentAsync(limit);
@@ -60,7 +65,8 @@ namespace DevPodcast.Server.Controllers
             return Ok(model);
         }
 
-        [Route("api/podcast/recent/{podcastLimit}/{episodeLimit}")]
+        [HttpGet]
+        [Route("v1/podcast/recent/{podcastLimit}/{episodeLimit}")]
         public async Task<IActionResult> Recent(int podcastLimit, int episodeLimit)
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetRecentAsync(podcastLimit, episodeLimit);
@@ -68,7 +74,8 @@ namespace DevPodcast.Server.Controllers
             return Ok(model);
         }
 
-        [Route("api/podcast/tag/{id}")]
+        [HttpGet]
+        [Route("v1/podcast/tag/{id}")]
         public async Task<IActionResult> Tag(int Id)
         {
             var podcasts = await _unitOfWork.PodcastTagRepository.GetByTagIdAsync(Id);

@@ -48,8 +48,7 @@ namespace DevPodcast.Services.Core
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", true, true)
-                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
-                .AddSecretsManager();
+                .AddJsonFile($"appsettings.{environmentName}.json", true, true);
             return builder.Build();
         }
 
