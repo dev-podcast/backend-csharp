@@ -7,6 +7,7 @@ namespace DevPodcast.Server.Core.Controllers
 {
     [ApiVersion("1")]
     [ApiController]
+    [Route("v1/[controller]")]
     public class SearchController : Controller
     {
         private IMapper _mapper { get; }
@@ -19,7 +20,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/search/{searchString}")]
+        [Route("search/{searchString}")]
         public async Task<IActionResult> Get(string searchString)
         {
             var result = await _unitOfWork.SearchRepository.GetSearchResultAsync(_unitOfWork, searchString);

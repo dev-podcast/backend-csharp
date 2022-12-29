@@ -1,13 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using DevPodcast.Domain;
 using DevPodcast.Domain.Entities;
 using DevPodcast.Server.Core.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
-namespace DevPodcast.Server.Controllers
+namespace DevPodcast.Server.Core.Controllers
 {
     [ApiVersion("1")]
     [ApiController]

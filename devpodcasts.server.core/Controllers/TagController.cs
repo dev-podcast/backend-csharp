@@ -22,7 +22,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/all")]
+        [Route("all")]
         public async Task<IActionResult> Get()
         {
             var tags = await _unitOfWork.TagRepository.GetAllAsync(_ => true);
@@ -31,7 +31,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/{tagId}")]
+        [Route("{tagId}")]
         public async Task<IActionResult> Get(int tagId)
         {
             var tag = await _unitOfWork.TagRepository.GetAsync(t => t.Id == tagId);
@@ -40,7 +40,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/{tagName}")]
+        [Route("{tagName}")]
         public async Task<IActionResult> Get(string tagName)
         {
             var tag = await _unitOfWork.TagRepository.GetAsync(t => t.Description == tagName);
@@ -49,7 +49,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/id/search/{tagId}/{type}")]
+        [Route("id/search/{tagId}/{type}")]
         public async Task<IActionResult> Get(int tagId, int type)
         {
             switch (type)
@@ -76,7 +76,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/name/search/{tagName}/{type}")]
+        [Route("name/search/{tagName}/{type}")]
         public async Task<IActionResult> Get(string tagName, int type)
         {
             switch (type)

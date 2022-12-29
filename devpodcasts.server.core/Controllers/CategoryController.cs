@@ -10,6 +10,7 @@ namespace DevPodcast.Server.Core.Controllers
 {
     [ApiVersion("1")]
     [ApiController]
+    [Route("v1/[controller]")]
     public class CategoryController : Controller
     {
         private IMapper _mapper { get; }
