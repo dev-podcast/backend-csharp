@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DevPodcast.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace DevPodcast.Data.EntityFramework.Repositories
 {
@@ -26,19 +25,9 @@ namespace DevPodcast.Data.EntityFramework.Repositories
             Set.Add(entity);
         }
 
-        public ValueTask<EntityEntry<TEntity>> AddAsync(TEntity entity)
-        {
-            return Set.AddAsync(entity);
-        }
-
         public void AddRange(IEnumerable<TEntity> entities)
         {
             Set.AddRange(entities);
-        }
-
-        public Task AddRangeAsync(IEnumerable<TEntity> entities)
-        {
-            return Set.AddRangeAsync(entities);
         }
 
         public virtual TEntity Get(Expression<Func<TEntity, bool>> condition)
@@ -71,9 +60,5 @@ namespace DevPodcast.Data.EntityFramework.Repositories
             Set.RemoveRange(entities);
         }
 
-        public void Update(TEntity entity)
-        {
-            Set.Update(entity);
-        }
     }
 }

@@ -20,7 +20,7 @@ namespace DevPodcast.Services.Core
             string connStringKey = Configuration.GetSection("ConnectionStrings").GetSection("PodcastDb").Value;
             var connString = Configuration.GetSection(connStringKey).GetValue<string>(connStringKey);
             return new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlServer(connString).Options);
+                .UseSqlServer(connStringKey).Options);
         }
     }
 }

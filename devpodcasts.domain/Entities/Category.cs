@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace DevPodcast.Domain.Entities
 {
     public class Category
     {
-        public int Id { get; set; }
+
+        [Key]
+        public int Id { get; set; }    
         public string Description { get; set; }
-        public ICollection<PodcastCategory> PodcastCategories { get; set; }
-        public ICollection<EpisodeCategory> EpisodeCategories { get; set; }
+        public ICollection<Podcast> Podcasts { get; set; }
+        public ICollection<Episode> Episodes { get; set; }
     }
 }

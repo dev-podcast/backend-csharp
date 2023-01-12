@@ -17,34 +17,34 @@ namespace DevPodcast.Data.EntityFramework.Repositories
 
         public override Episode Get(Expression<Func<Episode, bool>> predicate)
         {
-            return Set.Where(predicate).Include(e => e.EpisodeTags).SingleOrDefault();
+            return Set.Where(predicate).Include(e => e.Tags).SingleOrDefault();
         }
 
         public override Task<Episode> GetAsync(Expression<Func<Episode, bool>> predicate)
         {
-            return Set.Where(predicate).Include(e => e.EpisodeTags).SingleOrDefaultAsync();
+            return Set.Where(predicate).Include(e => e.Tags).SingleOrDefaultAsync();
         }
 
         public ICollection<Episode> GetRecent(int Id, int numberToTake)
         {
             return Set.Where(e => e.PodcastId == Id).OrderByDescending(p => p.PublishedDate).Include(e => e.Podcast)
-                .Include(e => e.EpisodeTags).Take(numberToTake).ToList();
+                .Include(e => e.Tags).Take(numberToTake).ToList();
         }
 
         public Task<List<Episode>> GetRecentAsync(int Id, int numberToTake)
         {
             return Set.Where(e => e.PodcastId == Id).OrderByDescending(p => p.PublishedDate).Include(e => e.Podcast)
-                .Include(e => e.EpisodeTags).Take(numberToTake).ToListAsync();
+                .Include(e => e.Tags).Take(numberToTake).ToListAsync();
         }
 
         public Episode GetByTag(Expression<Func<Episode, bool>> predicate)
         {
-            return Set.Where(predicate).Include(e => e.EpisodeTags).SingleOrDefault();
+            return Set.Where(predicate).Include(e => e.Tags).SingleOrDefault();
         }
 
         public Task<Episode> GetByTagAsync(Expression<Func<Episode, bool>> predicate)
         {
-            return Set.Where(predicate).Include(e => e.EpisodeTags).SingleOrDefaultAsync();
+            return Set.Where(predicate).Include(e => e.Tags).SingleOrDefaultAsync();
         }
     }
 }

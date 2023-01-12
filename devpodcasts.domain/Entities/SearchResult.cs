@@ -6,8 +6,8 @@ namespace DevPodcast.Domain.Entities
 {
     public class SearchResult
     {
-        public List<Episode> Episodes { get; set; }
-        public List<Podcast> Podcasts { get; set; }
+        public ICollection<Episode> Episodes { get; set; }
+        public ICollection<Podcast> Podcasts { get; set; }
         public Category Category { get; set; } = new Category();
         
     }

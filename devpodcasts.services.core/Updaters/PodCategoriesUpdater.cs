@@ -7,109 +7,108 @@ using System.Threading.Tasks;
 using DevPodcast.Data.EntityFramework;
 using DevPodcast.Domain.Entities;
 using DevPodcast.Services.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace DevPodcast.Services.Core.Updaters
 {
-    public class PodCategoriesUpdater : Updater, IUpdater
+    public class PodCategoriesUpdater : IPodCategoriesUpdater
     {
-        public PodCategoriesUpdater(ILogger<PodCategoriesUpdater> logger, IDbContextFactory dbContextFactory)
-            : base(logger, dbContextFactory)
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<IPodCategoriesUpdater> _logger;
+        private readonly IDbContextFactory _dbContextFactory;
+        private ICollection<Category> _categories { get; } = new List<Category>();
+
+        public PodCategoriesUpdater(ILogger<IPodCategoriesUpdater> logger, IDbContextFactory dbContextFactory)
         {
-            Context = dbContextFactory.CreateDbContext();
-            Context.Database.AutoTransactionsEnabled = false;
+            _logger = logger;
+            _dbContextFactory = dbContextFactory;
+            _context = dbContextFactory.CreateDbContext();           
         }
-
-        private static ApplicationDbContext Context { get; set; }
-
-        private ICollection<PodcastCategory> Categories { get; } = new List<PodcastCategory>();
 
         public Task UpdateDataAsync()
         {
             return Task.Run(async () =>
             {
-                var rootData = await GetRootData().ConfigureAwait(false);
+                var rootData = await GetRootDataAsync();
 
                 if (rootData != null)
                 {
-                    Logger.LogInformation("********Updating Podcast Categories");
+                    _logger.LogInformation("********Updating Podcast Categories");
                     var dictionary = rootData.ToObject<IDictionary<string, JToken>>();
 
                     var tasks = new List<Task>();
                     foreach (var kvp in dictionary)
-                        tasks.Add(ProcessCategory(kvp));
+                        tasks.Add(ProcessCategoryAsync(kvp));
 
                     await Task.WhenAll(tasks).ConfigureAwait(false);
 
-                    await ComitData().ConfigureAwait(false);
+                    await ComitDataAsync();
 
-                    Logger.LogInformation("Podcast Categories Update DONE!");
+                    _logger.LogInformation("Podcast Categories Update DONE!");
 
                     Dispose();
                 }
             });
         }
-
-        private async Task ComitData()
-        {
-            await Context.PodcastCategory.AddRangeAsync(Categories).ConfigureAwait(false);
-            await Context.SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        private async Task ProcessCategory(KeyValuePair<string, JToken> item)
+    
+        private async Task ProcessCategoryAsync(KeyValuePair<string, JToken> item)
         {
             var podId = item.Key;
             var catArray = JArray.Parse(item.Value.ToString());
-            var podcast = GetPodcast(podId);
+            var podcast = await _context.Podcast.FindAsync(Convert.ToInt32(podId, CultureInfo.InvariantCulture));
 
             if (podcast != null)
             {
-                Logger.LogInformation("********Updating: " + podcast.Title);
-                Parallel.ForEach(catArray, cat =>
+                _logger.LogInformation("********Updating: " + podcast.Title);
+                catArray.ForEach(async cat =>
                 {
-                    var podcastCategory = new PodcastCategory
+                    var catId = Convert.ToInt32(cat, CultureInfo.InvariantCulture);
+                    using (var innerContext = _dbContextFactory.CreateDbContext())
                     {
-                        CategoryId = Convert.ToInt32(cat, CultureInfo.InvariantCulture), PodcastId = podcast.Id
-                    };
-
-                    using (var innerContext = DbContextFactory.CreateDbContext())
-                    {
-                        var exists = PodcastCategoryExists(podcastCategory);
-                        if (exists == null)
-                            Categories.Add(podcastCategory);
+                        var category = await innerContext.Category.Where(x => x.Id == catId).SingleOrDefaultAsync();
+                        if (category != null)
+                        {
+                            //Category exists and just need to add podcast to it.
+                            category.Podcasts.Add(podcast);
+                           await  innerContext.SaveChangesAsync();
+                        }
+                        _categories.Add(category);
                     }
                 });
             }
 
-            if (Categories.Any())
-                Categories.AddRange(Categories);
-        }
+            //if (_categories.Any())
+            //    _categories.AddRange(_categories);        
+        } 
 
-        private static PodcastCategory PodcastCategoryExists(PodcastCategory podcastCategory)
-        {
-            return Context.PodcastCategory.FirstOrDefault(x =>
-                x.CategoryId == podcastCategory.CategoryId &&
-                x.PodcastId == podcastCategory.PodcastId);
-        }
-
-        private static Podcast GetPodcast(string podId)
-        {
-            return Context.Podcast.Find(Convert.ToInt32(podId, CultureInfo.InvariantCulture));
-        }
-
-        private async Task<JObject> GetRootData()
+        private async Task<JObject> GetRootDataAsync()
         {
             var categoriesPath = Environment.CurrentDirectory;
-            Logger.LogInformation(categoriesPath);
+            _logger.LogInformation(categoriesPath);
             categoriesPath = Path.Combine(categoriesPath, @"PodList/podcategories.json");
 
-            return JObject.Parse(await File.ReadAllTextAsync(categoriesPath).ConfigureAwait(false));
+            var jsonObject = await File.ReadAllTextAsync(categoriesPath).ConfigureAwait(false);
+
+            return JObject.Parse(jsonObject);
+        }
+
+        private async Task ComitDataAsync()
+        {
+            //TODO: Need to look this over since the flow of code has changed
+            await _context.Category.AddRangeAsync(_categories).ConfigureAwait(false);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public void Dispose()
         {
-            Context.Dispose();
+            _context.Dispose();
         }
+    }
+
+    public interface IPodCategoriesUpdater : IUpdater
+    {
+       
     }
 }

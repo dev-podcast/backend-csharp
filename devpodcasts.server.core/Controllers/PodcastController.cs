@@ -30,18 +30,12 @@ namespace DevPodcast.Server.Core.Controllers
             return Ok(model);
         }
 
-        //[Route("api/podcast/{ids}")]
-        //public async Task<Podcast> Get(int[] ids)
-        //{
-        //    return await _unitOfWork.PodcastRepository.GetAsync(x => ids.Contains(x.Id));
-        //}
-
         [HttpGet]
         [Route("v1/podcast/all")]
         public async Task<IActionResult> GetAll()
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetAllAsync(_ => true);
-            var model = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcasts);
+            var model = _mapper.Map<ICollection<Podcast>, List<PodcastViewModel>>(podcasts);
             return Ok(model);
         }
 
@@ -50,7 +44,7 @@ namespace DevPodcast.Server.Core.Controllers
         public async Task<IActionResult> Recent()
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetRecentAsync(15);
-            var model = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcasts);
+            var model = _mapper.Map<ICollection<Podcast>, List<PodcastViewModel>>(podcasts);
             return Ok(model);
         }
 
@@ -59,7 +53,7 @@ namespace DevPodcast.Server.Core.Controllers
         public async Task<IActionResult> Recent(int limit)
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetRecentAsync(limit);
-            var model = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcasts);
+            var model = _mapper.Map<ICollection<Podcast>, List<PodcastViewModel>>(podcasts);
 
             return Ok(model);
         }
@@ -69,7 +63,7 @@ namespace DevPodcast.Server.Core.Controllers
         public async Task<IActionResult> Recent(int podcastLimit, int episodeLimit)
         {
             var podcasts = await _unitOfWork.PodcastRepository.GetRecentAsync(podcastLimit, episodeLimit);
-            var model = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcasts);
+            var model = _mapper.Map<ICollection<Podcast>, List<PodcastViewModel>>(podcasts);
             return Ok(model);
         }
 
@@ -77,8 +71,8 @@ namespace DevPodcast.Server.Core.Controllers
         [Route("v1/podcast/tag/{id}")]
         public async Task<IActionResult> Tag(int Id)
         {
-            var podcasts = await _unitOfWork.PodcastTagRepository.GetByTagIdAsync(Id);
-            var model = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcasts);
+            var tags = await _unitOfWork.TagRepository.GetAsync(x => x.Id == Id);
+            var model = _mapper.Map<ICollection<Podcast>, List<PodcastViewModel>>(tags.Podcasts);
             return Ok(model);
         }
     }

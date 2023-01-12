@@ -14,19 +14,19 @@ using System.Threading.Tasks;
 
 namespace DevPodcast.Services.Core.Updaters
 {
-    public class BasePodcastUpdater : Updater, IUpdater
+    public class BasePodcastUpdater : IBasePodcastUpdater
     {
-
-        private ApplicationDbContext Context { get; set; }
-        public BasePodcastUpdater(ILogger<BasePodcastUpdater> logger, IDbContextFactory dbContextFactory)
-            : base(logger, dbContextFactory)
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<IBasePodcastUpdater> _logger;
+  
+        public BasePodcastUpdater(ILogger<IBasePodcastUpdater> logger, IDbContextFactory dbContextFactory)
         {
-           
-            Context = dbContextFactory.CreateDbContext();
+            _logger = logger;
+            _context = dbContextFactory.CreateDbContext();
         }
 
-        private ICollection<BasePodcast> BasePodcasts { get;} = new List<BasePodcast>();
-        private ICollection<Tag> Tags { get; } = new List<Tag>();
+        private ICollection<BasePodcast> _basePodcasts { get;} = new List<BasePodcast>();
+        private ICollection<Tag> _tags { get; } = new List<Tag>();
 
         public Task UpdateDataAsync()
         {
@@ -37,25 +37,25 @@ namespace DevPodcast.Services.Core.Updaters
                     var properties = basePodcasts.GetType().GetProperties();
                     foreach (var prop in properties)
                     {
-                        var existingBasePodcasts = Context.BasePodcast.ToImmutableList();
+                        var existingBasePodcasts = _context.BasePodcast.ToImmutableList();
                         var podcastList = (IEnumerable<BasePodcastJsonObject>)prop.GetValue(basePodcasts);
                         var propertyName = prop.Name;
 
-                        Logger.LogInformation("BasePodcast Category: " + propertyName);
+                        _logger.LogInformation("BasePodcast Category: " + propertyName);
 
                         var basePodcastJsonObjects = FindNonExisting(podcastList, existingBasePodcasts).ToList();
                         if (!basePodcastJsonObjects.Any()) continue;
-                        BasePodcasts.AddRange(basePodcastJsonObjects.Select(d => d.CreateBasePodcast()));
+                        _basePodcasts.AddRange(basePodcastJsonObjects.Select(d => d.CreateBasePodcast()));
                        
                     }
 
                     Save().Wait();
 
-                    Logger.LogInformation("Updating base podcasts is complete...");
+                    _logger.LogInformation("Updating base podcasts is complete...");
             });
         }
 
-        private static RootJsonObject GetBasePodcastsFromJson()
+        private RootJsonObject GetBasePodcastsFromJson()
         {
             var podListPath = Environment.CurrentDirectory;
             podListPath = Path.Combine(podListPath, @"PodList/podlist.json");
@@ -81,17 +81,22 @@ namespace DevPodcast.Services.Core.Updaters
 
         private async Task Save()
         {
-            if (BasePodcasts.Any())
+            if (_basePodcasts.Any())
             {
-                await Context.BasePodcast.AddRangeAsync(BasePodcasts).ConfigureAwait(false);
-                await Context.SaveChangesAsync().ConfigureAwait(false);
+                await _context.BasePodcast.AddRangeAsync(_basePodcasts).ConfigureAwait(false);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
             }
-            Context.Dispose();
+            _context.Dispose();
         }
 
         public void Dispose()
         {
-            Context.Dispose();
+            _context.Dispose();
         }
+    }
+
+
+    public interface IBasePodcastUpdater : IUpdater
+    {
     }
 }

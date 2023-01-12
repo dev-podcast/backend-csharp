@@ -5,7 +5,12 @@ using System.Threading.Tasks;
 
 namespace DevPodcast.Services.Core
 {
-    public class ServiceRunner
+    public interface IServiceRunner
+    {
+        Task RunAsync(ICollection<IUpdater> updaters);
+    }
+
+    public class ServiceRunner: IServiceRunner
     {
         private readonly ILogger<ServiceRunner> _logger;
 
@@ -15,7 +20,7 @@ namespace DevPodcast.Services.Core
             _logger = logger;
         }
 
-        public Task Run(ICollection<IUpdater> updaters)
+        public Task RunAsync(ICollection<IUpdater> updaters)
         {
             return Task.Run(() =>
             {
