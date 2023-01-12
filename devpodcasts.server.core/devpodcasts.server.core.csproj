@@ -34,8 +34,8 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\devpodcasts.data.entityframework\DevPodcast.Data.EntityFramework.csproj" />
-    <ProjectReference Include="..\devpodcasts.domain\DevPodcast.Domain.csproj" />
+    <ProjectReference Include="..\devpodcasts.data.entityframework\devpodcasts.data.entityframework.csproj" />
+    <ProjectReference Include="..\devpodcasts.domain\devpodcasts.domain.csproj" />
   </ItemGroup>
 
 </Project>

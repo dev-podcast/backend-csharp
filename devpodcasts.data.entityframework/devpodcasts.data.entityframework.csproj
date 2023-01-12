@@ -16,7 +16,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\devpodcasts.domain\DevPodcast.Domain.csproj" />
+    <ProjectReference Include="..\devpodcasts.domain\devpodcasts.domain.csproj" />
   </ItemGroup>
   
   <ItemGroup>
