@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DevPodcast.Domain.Entities
+namespace devpodcasts.Domain.Entities
 {
     public partial class Podcast
     {

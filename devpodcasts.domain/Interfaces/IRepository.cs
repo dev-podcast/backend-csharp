@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace DevPodcast.Domain.Interfaces
+namespace devpodcasts.Domain.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {

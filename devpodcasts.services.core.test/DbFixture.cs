@@ -1,12 +1,11 @@
 ﻿using System.IO;
-using DevPodcast.Data.EntityFramework;
-using DevPodcast.Services.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using devpodcasts.common.Factories;
+using devpodcasts.common.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace DevPodcast.Services.Core.Test
+namespace devpodcasts.Services.Core.Test
 {
     public class DbFixture
     {

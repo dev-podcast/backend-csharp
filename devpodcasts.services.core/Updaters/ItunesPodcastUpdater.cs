@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using DevPodcast.Data.EntityFramework;
-using DevPodcast.Domain.Entities;
-using DevPodcast.Services.Core.Interfaces;
-using DevPodcast.Services.Core.JsonObjects;
-using DevPodcast.Services.Core.Utils;
+using devpodcasts.Data.EntityFramework;
+using devpodcasts.Domain.Entities;
+using devpodcasts.Services.Core.Interfaces;
+using devpodcasts.Services.Core.JsonObjects;
+using devpodcasts.Services.Core.Utils;
+using devpodcasts.common.Interfaces;
+using devpodcasts.common.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace DevPodcast.Services.Core.Updaters
+namespace devpodcasts.Services.Core.Updaters
 {
     internal class ItunesPodcastUpdater : IItunesPodcastUpdater
     {
@@ -20,15 +22,15 @@ namespace DevPodcast.Services.Core.Updaters
         private readonly IDictionary<string, ICollection<string>> _podcastTags =
             new Dictionary<string, ICollection<string>>();
         private readonly ICollection<Tag> _tags = new List<Tag>();
-        private readonly IItunesQueryService _itunesQueryService;
+        private readonly IItunesHttpClient _itunesHttpClient;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<IItunesPodcastUpdater> _logger;
 
         public ItunesPodcastUpdater(ILogger<IItunesPodcastUpdater> logger,
-            IDbContextFactory dbContextFactory, IItunesQueryService itunesQueryService)
+            IDbContextFactory dbContextFactory, IItunesHttpClient itunesHttpClient)
         {
             _logger = logger;
-            _itunesQueryService = itunesQueryService;
+            _itunesHttpClient = itunesHttpClient;
             _context = dbContextFactory.CreateDbContext();
         }
 
@@ -110,7 +112,7 @@ namespace DevPodcast.Services.Core.Updaters
         private async Task CreatePodcast(string itunesId)
         {
             var result =
-                await _itunesQueryService.QueryItunesId(itunesId)
+                await _itunesHttpClient.QueryItunesId(itunesId)
                     .ConfigureAwait(true);
 
 

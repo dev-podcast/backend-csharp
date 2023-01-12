@@ -76,6 +76,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\devpodcasts.common\devpodcasts.common.csproj" />
     <ProjectReference Include="..\devpodcasts.data.entityframework\devpodcasts.data.entityframework.csproj" />
     <ProjectReference Include="..\devpodcasts.domain\devpodcasts.domain.csproj" />
   </ItemGroup>

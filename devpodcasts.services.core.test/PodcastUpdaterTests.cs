@@ -1,10 +1,10 @@
-﻿using DevPodcast.Services.Core.JsonObjects;
+﻿using devpodcasts.Services.Core.JsonObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SharpTestsEx;
 using Xunit;
 
-namespace DevPodcast.Services.Core.Test
+namespace devpodcasts.Services.Core.Test
 {
     public class PodcastUpdaterTests
     {

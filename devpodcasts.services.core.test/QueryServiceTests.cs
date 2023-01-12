@@ -1,9 +1,9 @@
-using DevPodcast.Services.Core.Utils;
+using devpodcasts.Services.Core.Utils;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Xunit;
 
-namespace DevPodcast.Services.Core.Test
+namespace devpodcasts.Services.Core.Test
 {
     public class QueryServiceTests
     {

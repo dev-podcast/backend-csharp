@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using DevPodcast.Data.EntityFramework;
-using DevPodcast.Domain.Entities;
-using DevPodcast.Services.Core.Interfaces;
-using DevPodcast.Services.Core.Updaters.Extensions;
+using devpodcasts.Data.EntityFramework;
+using devpodcasts.Domain.Entities;
+using devpodcasts.Services.Core.Interfaces;
+using devpodcasts.Services.Core.Updaters.Extensions;
+using devpodcasts.common.Interfaces;
+using devpodcasts.common.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using static DevPodcast.Services.Core.Updaters.Extensions.EpisodeConstants;
+using static devpodcasts.Services.Core.Updaters.Extensions.EpisodeConstants;
 
-namespace DevPodcast.Services.Core.Updaters
+namespace devpodcasts.Services.Core.Updaters
 {
     public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
     {
-        private readonly ILogger<IITunesEpisodeUpdater> _logger;
-        private readonly IItunesQueryService _itunesQueryService;
+        private readonly ILogger<ItunesEpisodeUpdater> _logger;
+        private readonly IItunesHttpClient _itunesHttpClient;
         private readonly ApplicationDbContext _context;
         private readonly IDictionary<string, Episode> _episodes = new Dictionary<string, Episode>();
         private readonly IDictionary<string, ICollection<string>> _episodeTags = new Dictionary<string, ICollection<string>>();
@@ -28,12 +30,12 @@ namespace DevPodcast.Services.Core.Updaters
         /// <param name="logger"></param>
         /// <param name="dbContextFactory"></param>
         /// <param name="itunesQueryService"></param>
-        public ItunesEpisodeUpdater(ILogger<IITunesEpisodeUpdater> logger, 
-            IDbContextFactory dbContextFactory, 
-            IItunesQueryService itunesQueryService)
+        public ItunesEpisodeUpdater(ILogger<ItunesEpisodeUpdater> logger, 
+            IDbContextFactory dbContextFactory,
+            IItunesHttpClient itunesHttpClient)
         {
             _logger = logger;
-            _itunesQueryService= itunesQueryService;
+            _itunesHttpClient = itunesHttpClient;
             _context = dbContextFactory.CreateDbContext();
         }
         public async Task UpdateDataAsync()
@@ -43,7 +45,7 @@ namespace DevPodcast.Services.Core.Updaters
             foreach (var podcast in allPodcasts)
             {
                 _logger.LogInformation("Updating episodes for podcast: " + podcast.Title);
-                IEnumerable<XElement> episodes = await _itunesQueryService.QueryFeedUrl(podcast.FeedUrl).ConfigureAwait(false);
+                IEnumerable<XElement> episodes = await _itunesHttpClient.QueryFeedUrl(podcast.FeedUrl).ConfigureAwait(false);
                 foreach (var episode in episodes)
                     await GetEpisodeDataFromXml(episode, podcast).ConfigureAwait(false);
             }

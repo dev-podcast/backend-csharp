@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DevPodcast.Services.Core
+namespace devpodcasts.Services.Core
 {
     public static class Extensions
     {

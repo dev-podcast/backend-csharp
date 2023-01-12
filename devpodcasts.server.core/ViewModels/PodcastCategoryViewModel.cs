@@ -1,4 +1,4 @@
-﻿namespace DevPodcast.Server.Core.ViewModels
+﻿namespace devpodcasts.Server.Core.ViewModels
 {
     public class PodcastCategoryViewModel
     {

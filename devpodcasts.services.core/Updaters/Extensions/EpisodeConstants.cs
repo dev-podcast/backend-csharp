@@ -1,6 +1,6 @@
-﻿namespace DevPodcast.Services.Core.Updaters.Extensions
+﻿namespace devpodcasts.Services.Core.Updaters.Extensions
 {
-    public static class EpisodeConstants
+    public class EpisodeConstants
     {
         public const string TitleElementName = "title";
         public const string LinkElementName = "link";

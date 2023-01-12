@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace DevPodcast.Services.Core.JsonObjects
+namespace devpodcasts.Services.Core.JsonObjects
 {
     public class PodcastResult
     {

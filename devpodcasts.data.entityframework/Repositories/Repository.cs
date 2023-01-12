@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using DevPodcast.Domain.Interfaces;
+using devpodcasts.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevPodcast.Data.EntityFramework.Repositories
+namespace devpodcasts.Data.EntityFramework.Repositories
 {
     internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DevPodcast.Domain.Entities
+namespace devpodcasts.Domain.Entities
 {
     public partial class Tag
     {

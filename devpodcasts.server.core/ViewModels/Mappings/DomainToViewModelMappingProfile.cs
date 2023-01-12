@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DevPodcast.Domain.Entities;
+using devpodcasts.Domain.Entities;
 
-namespace DevPodcast.Server.Core.ViewModels.Mappings
+namespace devpodcasts.Server.Core.ViewModels.Mappings
 {
     public class DomainToViewModelMappingProfile : Profile
     {

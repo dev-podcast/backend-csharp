@@ -1,7 +1,7 @@
-﻿using DevPodcast.Domain.Entities;
+﻿using devpodcasts.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevPodcast.Data.EntityFramework
+namespace devpodcasts.Data.EntityFramework
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {

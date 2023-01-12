@@ -15,9 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.services.core.t
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.server.core.test", "devpodcasts.server.core.test\devpodcasts.server.core.test.csproj", "{EB023767-57DA-4228-818A-4A3ED60E6556}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{03F8283B-284C-43BA-92C3-557E95160421}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devpodcasts.common", "devpodcasts.common\devpodcasts.common.csproj", "{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.common", "devpodcasts.common\devpodcasts.common.csproj", "{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +47,6 @@ Global
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03F8283B-284C-43BA-92C3-557E95160421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03F8283B-284C-43BA-92C3-557E95160421}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03F8283B-284C-43BA-92C3-557E95160421}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03F8283B-284C-43BA-92C3-557E95160421}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}.Release|Any CPU.ActiveCfg = Release|Any CPU

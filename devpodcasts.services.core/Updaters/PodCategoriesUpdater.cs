@@ -4,14 +4,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DevPodcast.Data.EntityFramework;
-using DevPodcast.Domain.Entities;
-using DevPodcast.Services.Core.Interfaces;
+using devpodcasts.Data.EntityFramework;
+using devpodcasts.Domain.Entities;
+using devpodcasts.Services.Core.Interfaces;
+using devpodcasts.common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace DevPodcast.Services.Core.Updaters
+namespace devpodcasts.Services.Core.Updaters
 {
     public class PodCategoriesUpdater : IPodCategoriesUpdater
     {
@@ -77,10 +78,7 @@ namespace DevPodcast.Services.Core.Updaters
                         _categories.Add(category);
                     }
                 });
-            }
-
-            //if (_categories.Any())
-            //    _categories.AddRange(_categories);        
+            }       
         } 
 
         private async Task<JObject> GetRootDataAsync()

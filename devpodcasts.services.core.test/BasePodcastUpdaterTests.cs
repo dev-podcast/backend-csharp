@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using DevPodcast.Services.Core.JsonObjects;
+using devpodcasts.Services.Core.JsonObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using SharpTestsEx;
 
-namespace DevPodcast.Services.Core.Test
+namespace devpodcasts.Services.Core.Test
 {
     public class BasePodcastUpdaterTests
     {

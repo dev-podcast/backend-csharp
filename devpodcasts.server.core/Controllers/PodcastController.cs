@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using DevPodcast.Domain;
-using DevPodcast.Domain.Entities;
-using DevPodcast.Server.Core.ViewModels;
+using devpodcasts.Domain;
+using devpodcasts.Domain.Entities;
+using devpodcasts.Server.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DevPodcast.Server.Core.Controllers
+namespace devpodcasts.Server.Core.Controllers
 {
     [ApiVersion("1")]
     [ApiController]

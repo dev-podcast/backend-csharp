@@ -1,9 +1,9 @@
-﻿using DevPodcast.Services.Core.Interfaces;
+﻿using devpodcasts.Services.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DevPodcast.Services.Core
+namespace devpodcasts.Services.Core
 {
     public interface IServiceRunner
     {
