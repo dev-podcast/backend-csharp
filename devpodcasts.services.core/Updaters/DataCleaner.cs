@@ -1,11 +1,11 @@
-﻿using DevPodcast.Data.EntityFramework;
-using DevPodcast.Services.Core.Interfaces;
+﻿using devpodcasts.Data.EntityFramework;
+using devpodcasts.Services.Core.Interfaces;
+using devpodcasts.common.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DevPodcast.Services.Core.Updaters
+namespace devpodcasts.Services.Core.Updaters
 {
     public class DataCleaner : IDataCleaner
     {

@@ -1,7 +1,7 @@
-﻿using DevPodcast.Domain.Entities;
-using DevPodcast.Domain.Interfaces;
+﻿using devpodcasts.Domain.Entities;
+using devpodcasts.Domain.Interfaces;
 
-namespace DevPodcast.Data.EntityFramework.Repositories
+namespace devpodcasts.Data.EntityFramework.Repositories
 {
     internal class CategoryRepository : Repository<Category>, ICategoryRepository
     {

@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace DevPodcast.Services.Core.JsonObjects
+namespace devpodcasts.Services.Core.JsonObjects
 {
     public abstract class BasePodcastJsonObject
     {

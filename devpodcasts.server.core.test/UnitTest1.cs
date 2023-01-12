@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace DevPodcast.Server.Core.Test
+namespace devpodcasts.Server.Core.Test
 {
     public class UnitTest1
     {

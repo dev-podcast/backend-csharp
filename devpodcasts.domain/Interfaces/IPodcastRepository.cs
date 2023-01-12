@@ -1,8 +1,8 @@
-﻿using DevPodcast.Domain.Entities;
+﻿using devpodcasts.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DevPodcast.Domain.Interfaces
+namespace devpodcasts.Domain.Interfaces
 {
     public interface IPodcastRepository : IRepository<Podcast>, IDisplayData<Podcast>
     {

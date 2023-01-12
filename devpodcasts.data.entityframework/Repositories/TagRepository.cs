@@ -1,11 +1,11 @@
-﻿using DevPodcast.Domain.Entities;
-using DevPodcast.Domain.Interfaces;
+﻿using devpodcasts.Domain.Entities;
+using devpodcasts.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DevPodcast.Data.EntityFramework.Repositories
+namespace devpodcasts.Data.EntityFramework.Repositories
 {
     internal class TagRepository : Repository<Tag>, ITagRepository
     {

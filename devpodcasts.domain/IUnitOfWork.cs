@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DevPodcast.Domain.Interfaces;
+using devpodcasts.Domain.Interfaces;
 
-namespace DevPodcast.Domain
+namespace devpodcasts.Domain
 {
     public interface IUnitOfWork : IDisposable
     {

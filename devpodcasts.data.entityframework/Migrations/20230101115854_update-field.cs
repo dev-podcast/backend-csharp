@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace DevPodcast.Data.EntityFramework.Migrations
+namespace devpodcasts.Data.EntityFramework.Migrations
 {
     /// <inheritdoc />
     public partial class updatefield : Migration

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using DevPodcast.Domain;
+using devpodcasts.Domain;
 
-namespace DevPodcast.Server.Core.Controllers
+namespace devpodcasts.Server.Core.Controllers
 {
     [ApiVersion("1")]
     [ApiController]

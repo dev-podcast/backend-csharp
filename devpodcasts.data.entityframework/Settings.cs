@@ -1,4 +1,4 @@
-﻿namespace DevPodcast.Data.EntityFramework
+﻿namespace devpodcasts.Data.EntityFramework
 {
     public class Settings
     {

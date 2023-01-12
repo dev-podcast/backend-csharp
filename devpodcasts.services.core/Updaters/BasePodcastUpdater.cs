@@ -1,8 +1,9 @@
-﻿using DevPodcast.Data.EntityFramework;
-using DevPodcast.Domain.Entities;
-using DevPodcast.Services.Core.Interfaces;
-using DevPodcast.Services.Core.JsonObjects;
-using DevPodcast.Services.Core.Utils;
+﻿using devpodcasts.Data.EntityFramework;
+using devpodcasts.Domain.Entities;
+using devpodcasts.Services.Core.Interfaces;
+using devpodcasts.Services.Core.JsonObjects;
+using devpodcasts.Services.Core.Utils;
+using devpodcasts.common.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -12,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DevPodcast.Services.Core.Updaters
+namespace devpodcasts.Services.Core.Updaters
 {
     public class BasePodcastUpdater : IBasePodcastUpdater
     {

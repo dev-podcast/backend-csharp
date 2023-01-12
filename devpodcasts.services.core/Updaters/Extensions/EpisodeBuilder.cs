@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Xml.Linq; 
-using DevPodcast.Domain.Entities;
-using DevPodcast.Services.Core.Utils;
-using static DevPodcast.Services.Core.Updaters.Extensions.EpisodeConstants;
+using System.Xml.Linq;
+using devpodcasts.Domain.Entities;
+using devpodcasts.Services.Core.Utils;
 
-namespace DevPodcast.Services.Core.Updaters.Extensions
+namespace devpodcasts.Services.Core.Updaters.Extensions
 {
     public class EpisodeBuilder
     {
@@ -43,8 +42,8 @@ namespace DevPodcast.Services.Core.Updaters.Extensions
             if (enclosure.HasAttributes)
             {
                 var audioStreamObject = enclosure.Attributes().ToList();
-                var audioType = audioStreamObject.FirstOrDefault(x => x.Name == TypeElementName);
-                var audioUrl = audioStreamObject.FirstOrDefault(x => x.Name == UrlElementName);
+                var audioType = audioStreamObject.FirstOrDefault(x => x.Name == EpisodeConstants.TypeElementName);
+                var audioUrl = audioStreamObject.FirstOrDefault(x => x.Name == EpisodeConstants.UrlElementName);
 
                 _audioType = audioType?.Value;
 

@@ -1,10 +1,11 @@
-﻿using DevPodcast.Services.Core.Updaters;
+﻿using devpodcasts.Services.Core.Updaters;
+using devpodcasts.common.Factories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace DevPodcast.Services.Core.Test
+namespace devpodcasts.Services.Core.Test
 {
     public class EpisodeUpdaterTests: IClassFixture<DbFixture>
     {

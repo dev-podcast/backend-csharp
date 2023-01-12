@@ -1,4 +1,4 @@
-﻿namespace DevPodcast.Domain.Entities
+﻿namespace devpodcasts.Domain.Entities
 {
     public enum SearchType
     {

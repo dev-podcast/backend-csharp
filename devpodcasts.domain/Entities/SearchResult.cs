@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevPodcast.Domain.Entities
+namespace devpodcasts.Domain.Entities
 {
     public class SearchResult
     {

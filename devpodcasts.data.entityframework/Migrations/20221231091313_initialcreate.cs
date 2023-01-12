@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace DevPodcast.Data.EntityFramework.Migrations
+namespace devpodcasts.Data.EntityFramework.Migrations
 {
     /// <inheritdoc />
     public partial class initialcreate : Migration

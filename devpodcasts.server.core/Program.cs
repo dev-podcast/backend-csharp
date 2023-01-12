@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using AutoMapper;
-using DevPodcast.Domain;
-using DevPodcast.Data.EntityFramework;
+using devpodcasts.Domain;
+using devpodcasts.Data.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +21,7 @@ var builder = WebApplication
 builder.Host.UseSerilog();
 
 var environmentSettings = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-var environment = Enum.TryParse<DevPodcast.Server.Core.Enums.Environments>(environmentSettings, out var result)
+var environment = Enum.TryParse<devpodcasts.Server.Core.Enums.Environments>(environmentSettings, out var result)
     ? result
     : throw new FileLoadException(
         "ASPNETCORE_ENVIRONMENT must be set to either Prod, Qa, Test or Development.");

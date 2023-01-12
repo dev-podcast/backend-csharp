@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 
-namespace DevPodcast.Services.Core
+namespace devpodcasts.Services.Core
 {
     public class XEpisode
     {

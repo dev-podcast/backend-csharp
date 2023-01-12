@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace DevPodcast.Services.Core.Utils
+namespace devpodcasts.Services.Core.Utils
 {
     public static class StringCleaner
     {

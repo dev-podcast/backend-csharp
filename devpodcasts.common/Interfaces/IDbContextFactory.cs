@@ -1,12 +1,10 @@
-﻿using DevPodcast.Data.EntityFramework;
+﻿using devpodcasts.Data.EntityFramework;
 using Microsoft.Extensions.Configuration;
 
-namespace DevPodcast.Services.Core.Interfaces
+namespace devpodcasts.common.Interfaces
 {
     public interface IDbContextFactory
     {
-        IConfiguration Configuration { get; set; }
-
         ApplicationDbContext CreateDbContext();
     }
 }

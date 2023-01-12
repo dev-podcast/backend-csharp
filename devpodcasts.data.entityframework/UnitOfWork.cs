@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using DevPodcast.Data.EntityFramework.Repositories;
-using DevPodcast.Domain;
-using DevPodcast.Domain.Interfaces;
+using devpodcasts.Data.EntityFramework.Repositories;
+using devpodcasts.Domain;
+using devpodcasts.Domain.Interfaces;
 
-namespace DevPodcast.Data.EntityFramework
+namespace devpodcasts.Data.EntityFramework
 {
     public class UnitOfWork : IUnitOfWork
     {

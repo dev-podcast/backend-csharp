@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using DevPodcast.Data.EntityFramework;
-using DevPodcast.Domain;
-using DevPodcast.Services.Core.Interfaces;
-using DevPodcast.Services.Core.Updaters;
+using devpodcasts.Data.EntityFramework;
+using devpodcasts.Domain;
+using devpodcasts.Services.Core.Interfaces;
+using devpodcasts.Services.Core.Updaters;
+using devpodcasts.common;
+using devpodcasts.common.Factories;
+using devpodcasts.common.Interfaces;
+using devpodcasts.common.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
-namespace DevPodcast.Services.Core
+namespace devpodcasts.Services.Core
 {
     internal class Program
     {
@@ -66,7 +70,7 @@ namespace DevPodcast.Services.Core
 
             services.AddSingleton(config);
             services.AddTransient<IDbContextFactory, DbContextFactory>();
-            services.AddSingleton<IItunesQueryService, ItunesQueryService>();
+            services.AddSingleton<IItunesHttpClient, ItunesHttpClient>();
             services.AddTransient<IItunesPodcastUpdater, ItunesPodcastUpdater>();
             services.AddTransient<IITunesEpisodeUpdater, ItunesEpisodeUpdater>();
             services.AddTransient<IBasePodcastUpdater, BasePodcastUpdater>();
