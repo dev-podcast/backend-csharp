@@ -1,0 +1,9 @@
+﻿CD DevPodcast.Data.EntityFramework
+
+
+Create Migration
+dotnet ef --startup-project ../devpodcasts.server.core migrations add update-field
+
+
+Update Database CMD
+dotnet ef --startup-project ../devpodcasts.server.core database update --verbose

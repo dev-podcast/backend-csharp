@@ -7,34 +7,43 @@ using System.Threading.Tasks;
 
 namespace DevPodcast.Services.Core.Updaters
 {
-    public class DataCleaner : Updater, IUpdater
+    public class DataCleaner : IDataCleaner
     {
-        public DataCleaner(ILogger<DataCleaner> logger, IDbContextFactory dbContextFactory)
-              : base(logger, dbContextFactory)
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<IDataCleaner> _logger;
+    
+        public DataCleaner(ILogger<IDataCleaner> logger, IDbContextFactory dbContextFactory)
         {
-            Context = dbContextFactory.CreateDbContext();
+            _logger = logger;
+            _context = dbContextFactory.CreateDbContext();
         }
 
-        public ApplicationDbContext Context { get; set; }
         public Task UpdateDataAsync()
         {
             return Task.Run(async () =>
             {
+                _logger.LogInformation("Starting data cleaner...");
                 await RemovePodcastsWithoutEpisodes().ConfigureAwait(false);
+                _logger.LogInformation("Finished cleaning data");
             });
         }
 
-        public async Task RemovePodcastsWithoutEpisodes()
+        private async Task RemovePodcastsWithoutEpisodes()
         {
-             Context = DbContextFactory.CreateDbContext();
-            var podcasts = Context.Podcast.Where(p => p.Episodes.Count == 0).ToList();
-            Context.Podcast.RemoveRange(podcasts);
-            await Context.SaveChangesAsync().ConfigureAwait(false);
+            //_context = DbContextFactory.CreateDbContext();
+            var podcasts = _context.Podcast.Where(p => p.Episodes.Count == 0).ToList();
+            _context.Podcast.RemoveRange(podcasts);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public void Dispose()
         {
-            Context.Dispose();
+            _context.Dispose();
         }
+    }
+
+    public interface IDataCleaner : IUpdater
+    {
+
     }
 }

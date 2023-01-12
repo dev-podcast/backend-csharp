@@ -10,6 +10,7 @@ namespace DevPodcast.Server.Core.Controllers
 {
     [ApiVersion("1")]
     [ApiController]
+    [Route("v1/[controller]")]
     public class CategoryController : Controller
     {
         private IMapper _mapper { get; }
@@ -65,14 +66,15 @@ namespace DevPodcast.Server.Core.Controllers
 
             switch (type)
             {
-                case (int)SearchType.All:
-                    //searchResult.Episodes = await _unitOfWork.Epi.GetByTagIdAsync(categoryId);
-                    searchResult.Podcasts = await _unitOfWork.PodcastCategoryRepository.GetByCategoryIdAsync(categoryId);
+                case (int)SearchType.All:                  
+                    searchResult.Podcasts = category.Podcasts;
+                    searchResult.Episodes = category.Episodes;
                     return Ok(searchResult);
                 case (int)SearchType.Episode:
-                    return null; //await _unitOfWork.EpisodeTagRepository.GetByTagIdAsync(categoryId);
+                    searchResult.Episodes = category.Episodes;
+                    return Ok(searchResult); 
                 case (int)SearchType.Podcast:
-                    searchResult.Podcasts = await _unitOfWork.PodcastCategoryRepository.GetByCategoryIdAsync(categoryId);
+                    searchResult.Podcasts = category.Podcasts;
                     return Ok(searchResult);
 
                 default:
@@ -94,14 +96,14 @@ namespace DevPodcast.Server.Core.Controllers
             switch (type)
             {
                 case (int)SearchType.All:
-                    // searchResult.Episodes = await _unitOfWork.EpisodeTagRepository.GetByTagNameAsync(categoryName);
-                    searchResult.Podcasts = await _unitOfWork.PodcastCategoryRepository.GetByCategoryNameAsync(categoryName);
+                    searchResult.Podcasts = category.Podcasts;
+                    searchResult.Episodes = category.Episodes;
                     return Ok(searchResult);
-
                 case (int)SearchType.Episode:
-                    return null; //await _unitOfWork.EpisodeTagRepository.GetByTagNameAsync(categoryName);
+                    searchResult.Episodes = category.Episodes;
+                    return Ok(searchResult);
                 case (int)SearchType.Podcast:
-                    searchResult.Podcasts = await _unitOfWork.PodcastCategoryRepository.GetByCategoryNameAsync(categoryName);
+                    searchResult.Podcasts = category.Podcasts;
                     return Ok(searchResult);
 
                 default:

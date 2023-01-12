@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DevPodcast.Domain.Entities
 {
@@ -7,14 +7,16 @@ namespace DevPodcast.Domain.Entities
     {
         public Tag()
         {
-            EpisodeTags = new List<EpisodeTag>();
-            PodcastTags = new List<PodcastTag>();
+            Episodes = new List<Episode>();
+            Podcasts = new List<Podcast>();
         }
 
+        [Key]
         public int Id { get; set; }
+        [Required]
         public string Description { get; set; }
 
-        public ICollection<EpisodeTag> EpisodeTags { get; set; }
-        public ICollection<PodcastTag> PodcastTags { get; set; }
+        public ICollection<Episode> Episodes { get; set; }
+        public ICollection<Podcast> Podcasts { get; set; }
     }
 }

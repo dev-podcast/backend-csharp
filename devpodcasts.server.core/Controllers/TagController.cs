@@ -22,7 +22,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/all")]
+        [Route("all")]
         public async Task<IActionResult> Get()
         {
             var tags = await _unitOfWork.TagRepository.GetAllAsync(_ => true);
@@ -31,7 +31,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/{tagId}")]
+        [Route("{tagId}")]
         public async Task<IActionResult> Get(int tagId)
         {
             var tag = await _unitOfWork.TagRepository.GetAsync(t => t.Id == tagId);
@@ -40,7 +40,7 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/{tagName}")]
+        [Route("{tagName}")]
         public async Task<IActionResult> Get(string tagName)
         {
             var tag = await _unitOfWork.TagRepository.GetAsync(t => t.Description == tagName);
@@ -49,57 +49,59 @@ namespace DevPodcast.Server.Core.Controllers
         }
 
         [HttpGet]
-        [Route("v1/tag/id/search/{tagId}/{type}")]
+        [Route("id/search/{tagId}/{type}")]
         public async Task<IActionResult> Get(int tagId, int type)
         {
-            switch (type)
-            {
-                case (int)SearchType.All:
-                    SearchResult searchResult = new SearchResult();
-                    searchResult.Episodes = await _unitOfWork.EpisodeTagRepository.GetByTagIdAsync(tagId);
-                    searchResult.Podcasts = await _unitOfWork.PodcastTagRepository.GetByTagIdAsync(tagId);
-                    return Ok(searchResult);
+            //switch (type)
+            //{
+            //    case (int)SearchType.All:
+            //        SearchResult searchResult = new SearchResult();
+            //        searchResult.Episodes = await _unitOfWork.EpisodeTagRepository.GetByTagIdAsync(tagId);
+            //        searchResult.Podcasts = await _unitOfWork.PodcastTagRepository.GetByTagIdAsync(tagId);
+            //        return Ok(searchResult);
 
-                case (int)SearchType.Episode:
-                    var episode = await _unitOfWork.EpisodeTagRepository.GetByTagIdAsync(tagId);
-                    var episodeModel = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episode);
-                    return Ok(episodeModel);
+            //    case (int)SearchType.Episode:
+            //        var episode = await _unitOfWork.EpisodeTagRepository.GetByTagIdAsync(tagId);
+            //        var episodeModel = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episode);
+            //        return Ok(episodeModel);
 
-                case (int)SearchType.Podcast:
-                    var podcast = await _unitOfWork.PodcastTagRepository.GetByTagIdAsync(tagId);
-                    var podcastModel = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcast);
-                    return Ok(podcastModel);
+            //    case (int)SearchType.Podcast:
+            //        var podcast = await _unitOfWork.PodcastTagRepository.GetByTagIdAsync(tagId);
+            //        var podcastModel = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcast);
+            //        return Ok(podcastModel);
 
-                default:
-                    return NotFound();
-            }
+            //    default:
+            //        return NotFound();
+            //}
+            return Ok();
         }
 
         [HttpGet]
-        [Route("v1/tag/name/search/{tagName}/{type}")]
+        [Route("name/search/{tagName}/{type}")]
         public async Task<IActionResult> Get(string tagName, int type)
         {
-            switch (type)
-            {
-                case (int)SearchType.All:
-                    SearchResult searchResult = new SearchResult();
-                    searchResult.Episodes = await _unitOfWork.EpisodeTagRepository.GetByTagNameAsync(tagName);
-                    searchResult.Podcasts = await _unitOfWork.PodcastTagRepository.GetByTagNameAsync(tagName);
-                    return Ok(searchResult);
+            //switch (type)
+            //{
+            //    case (int)SearchType.All:
+            //        SearchResult searchResult = new SearchResult();
+            //        searchResult.Episodes = await _unitOfWork.EpisodeTagRepository.GetByTagNameAsync(tagName);
+            //        searchResult.Podcasts = await _unitOfWork.PodcastTagRepository.GetByTagNameAsync(tagName);
+            //        return Ok(searchResult);
 
-                case (int)SearchType.Episode:
-                    var episode = await _unitOfWork.EpisodeTagRepository.GetByTagNameAsync(tagName);
-                    var episodeModel = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episode);
-                    return Ok(episodeModel);
+            //    case (int)SearchType.Episode:
+            //        var episode = await _unitOfWork.EpisodeTagRepository.GetByTagNameAsync(tagName);
+            //        var episodeModel = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episode);
+            //        return Ok(episodeModel);
 
-                case (int)SearchType.Podcast:
-                    var podcast = await _unitOfWork.PodcastTagRepository.GetByTagNameAsync(tagName);
-                    var podcastModel = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcast);
-                    return Ok(podcastModel);
+            //    case (int)SearchType.Podcast:
+            //        var podcast = await _unitOfWork.PodcastTagRepository.GetByTagNameAsync(tagName);
+            //        var podcastModel = _mapper.Map<List<Podcast>, List<PodcastViewModel>>(podcast);
+            //        return Ok(podcastModel);
 
-                default:
-                    return NotFound();
-            }
+            //    default:
+            //        return NotFound();
+            //}
+            return Ok();
         }
     }
 }

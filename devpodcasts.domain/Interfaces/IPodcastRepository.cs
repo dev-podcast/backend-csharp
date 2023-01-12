@@ -6,8 +6,7 @@ namespace DevPodcast.Domain.Interfaces
 {
     public interface IPodcastRepository : IRepository<Podcast>, IDisplayData<Podcast>
     {
-        Task<List<Podcast>> GetRecentAsync(int podcastLimit, int episodeLimit);
-        Task<List<Podcast>> GetRecentAsync(int numberToTake);
-        ICollection<Podcast> GetRecent(int numberToTake);
+        Task<ICollection<Podcast>> GetRecentAsync(int podcastLimit, int episodeLimit);
+        Task<ICollection<Podcast>> GetRecentAsync(int numberToTake);
     }
 }

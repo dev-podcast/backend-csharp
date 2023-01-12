@@ -17,7 +17,7 @@ namespace DevPodcast.Server.Core.ViewModels.Mappings
                 .ForMember(vm => vm.Name, map =>
                     map.MapFrom(c => c.Description))
                 .ForMember(vm => vm.PodcastCategories, map =>
-                    map.MapFrom(c => c.PodcastCategories));
+                    map.MapFrom(c => c.Podcasts));
 
             CreateMap<EpisodeTag, EpisodeTagViewModel>()
                 .ForMember(vm => vm.Episode,
@@ -51,19 +51,7 @@ namespace DevPodcast.Server.Core.ViewModels.Mappings
                 .ForMember(vm => vm.Title,
                     map => map.MapFrom(e => e.Title))
                 .ForMember(vm => vm.Tags,
-                    map => map.MapFrom(e => e.EpisodeTags));
-
-            CreateMap<PodcastCategory, PodcastCategoryViewModel>()
-                .ForMember(vm => vm.Podcast,
-                    map => map.MapFrom(pc => pc.Podcast))
-                .ForMember(vm => vm.Category,
-                    map => map.MapFrom(pc => pc.Category));
-
-            CreateMap<PodcastTag, PodcastTagViewModel>()
-                .ForMember(vm => vm.Podcast,
-                    map => map.MapFrom(pt => pt.Podcast))
-                .ForMember(vm => vm.Tag,
-                    map => map.MapFrom(pt => pt.Tag));
+                    map => map.MapFrom(e => e.Tags));  
 
             CreateMap<Podcast, PodcastViewModel>()
                .ForMember(vm => vm.Id,
@@ -79,7 +67,7 @@ namespace DevPodcast.Server.Core.ViewModels.Mappings
                .ForMember(vm => vm.EpisodeCount,
                    map => map.MapFrom(e => e.EpisodeCount))
                .ForMember(vm => vm.Categories,
-                   map => map.MapFrom(e => e.PodcastCategories))
+                   map => map.MapFrom(e => e.Categories))
                .ForMember(vm => vm.Country,
                    map => map.MapFrom(e => e.Country))
                .ForMember(vm => vm.Episodes,
@@ -95,7 +83,7 @@ namespace DevPodcast.Server.Core.ViewModels.Mappings
                .ForMember(vm => vm.LatestReleaseDate,
                    map => map.MapFrom(e => e.LatestReleaseDate))
                .ForMember(vm => vm.Tags,
-                   map => map.MapFrom(e => e.PodcastTags)).PreserveReferences();
+                   map => map.MapFrom(e => e.Tags)).PreserveReferences();
 
             CreateMap<Tag, TagViewModel>()
                 .ForMember(vm => vm.Id,
@@ -103,9 +91,9 @@ namespace DevPodcast.Server.Core.ViewModels.Mappings
                 .ForMember(vm => vm.Description,
                     map => map.MapFrom(t => t.Description))
                 .ForMember(vm => vm.EpisodeTags,
-                    map => map.MapFrom(t => t.EpisodeTags))
+                    map => map.MapFrom(t => t.Episodes))
                 .ForMember(vm => vm.PodcastTags,
-                    map => map.MapFrom(t => t.PodcastTags));
+                    map => map.MapFrom(t => t.Podcasts));
         }
     }
 }

@@ -23,55 +23,54 @@ namespace DevPodcast.Data.EntityFramework.Repositories
         public override Task<List<Podcast>> GetAllAsync(Expression<Func<Podcast, bool>> predicate)
         {
             return (from pod in _context.Podcast
-                    .Include(p => p.PodcastTags)
-                    .Include(p => p.PodcastCategories)
+                    .Include(p => p.Tags)
+                    .Include(p => p.Categories)
                 select pod).Where(predicate).ToListAsync();
         }
 
+    
         public override Task<Podcast> GetAsync(Expression<Func<Podcast, bool>> predicate)
         {
             return SingleQuery(predicate).SingleOrDefaultAsync();
         }
 
-        public ICollection<Podcast> GetRecent(int numberToTake)
+        public async Task<ICollection<Podcast>> GetRecentAsync(int numberToTake)
         {
-            return RecentQuery(numberToTake).ToList();
+            return await RecentQuery(numberToTake).ToListAsync();
         }
 
-        public Task<List<Podcast>> GetRecentAsync(int numberToTake)
+        public async Task<ICollection<Podcast>> GetRecentAsync(int podcastLimit, int episodeLimit)
         {
-            return RecentQuery(numberToTake).ToListAsync();
-        }
-
-        public Task<List<Podcast>> GetRecentAsync(int podcastLimit, int episodeLimit)
-        {
-            return RecentQuery(podcastLimit, episodeLimit).ToListAsync();
+            return await RecentQuery(podcastLimit, episodeLimit).ToListAsync();
         }
 
         private IQueryable<Podcast> RecentQuery(int podcastLimit = 15, int episodeLimit = 15)
-        {
+        {    
             return Set.Select(x => new Podcast
             {
                 Id = x.Id,
                 Title = x.Title,
                 Artists = x.Artists,
                 Episodes = x.Episodes.OrderByDescending(e => e.PublishedDate).Take(episodeLimit).ToList(),
-                PodcastTags = x.PodcastTags,
+                Tags = x.Tags,
                 Description = x.Description,
                 ImageUrl = x.ImageUrl,
                 ShowUrl = x.ShowUrl,
-                PodcastCategories = x.PodcastCategories,
+                Categories = x.Categories,
                 FeedUrl = x.FeedUrl,
                 EpisodeCount = x.EpisodeCount,
                 LatestReleaseDate = x.LatestReleaseDate
             }).OrderByDescending(x => x.LatestReleaseDate).Take(podcastLimit);
         }
 
+
+ 
+
         private IQueryable<Podcast> SingleQuery(Expression<Func<Podcast, bool>> predicate)
         {
             return Set.Where(predicate)
-                .Include(p => p.PodcastTags)
-                .Include(p => p.PodcastCategories)
+                .Include(p => p.Tags)
+                .Include(p => p.Categories)
                 .Include(p => p.Episodes);
         }
     }

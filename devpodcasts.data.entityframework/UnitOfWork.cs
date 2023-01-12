@@ -26,15 +26,6 @@ namespace DevPodcast.Data.EntityFramework
         public ICategoryRepository CategoryRepository =>
             _categoryRepository ??= new CategoryRepository(_context);
 
-        public IEpisodeTagRepository EpisodeTagRepository =>
-            _episodeTagRepository ??= new EpisodeTagRepository(_context);
-
-        public IPodcastTagRepository PodcastTagRepository =>
-            _podcastTagRepository ?? (_podcastTagRepository = new PodcastTagRepository(_context));
-
-        public IPodcastCategoryRepository PodcastCategoryRepository =>
-            _podcastCategoryRepository ?? (_podcastCategoryRepository = new PodcastCategoryRepository(_context));
-
         public ISearchRepository SearchRepository =>
             _searchRepository ?? (_searchRepository = new SearchRepository(_context));
 
@@ -54,10 +45,7 @@ namespace DevPodcast.Data.EntityFramework
             _basePodcastRepository = null;
             _episodeRepository = null;
             _tagRepository = null;
-            _categoryRepository = null;
-            _episodeTagRepository = null;
-            _podcastTagRepository = null;
-            _podcastCategoryRepository = null;
+            _categoryRepository = null;     
             _context.Dispose();
         }
 
@@ -67,10 +55,7 @@ namespace DevPodcast.Data.EntityFramework
         private IPodcastRepository _podcastRepository;
         private IBasePodcastRepository _basePodcastRepository;
         private IEpisodeRepository _episodeRepository;
-        private ITagRepository _tagRepository;
-        private IPodcastTagRepository _podcastTagRepository;
-        private IEpisodeTagRepository _episodeTagRepository;
-        private IPodcastCategoryRepository _podcastCategoryRepository;
+        private ITagRepository _tagRepository;   
         private ICategoryRepository _categoryRepository;
         private ISearchRepository _searchRepository;
 

@@ -8,36 +8,43 @@ using DevPodcast.Domain.Entities;
 using DevPodcast.Services.Core.Interfaces;
 using DevPodcast.Services.Core.JsonObjects;
 using DevPodcast.Services.Core.Utils;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace DevPodcast.Services.Core.Updaters
 {
-    internal class ItunesPodcastUpdater : Updater, IUpdater
+    internal class ItunesPodcastUpdater : IItunesPodcastUpdater
     {
-        private static readonly IDictionary<string, Podcast> Podcasts = new Dictionary<string, Podcast>();
-
-        private static readonly IDictionary<string, ICollection<string>> PodcastTags =
+        private readonly IDictionary<string, Podcast> _podcasts = new Dictionary<string, Podcast>();
+        private readonly IDictionary<string, ICollection<string>> _podcastTags =
             new Dictionary<string, ICollection<string>>();
+        private readonly ICollection<Tag> _tags = new List<Tag>();
+        private readonly IItunesQueryService _itunesQueryService;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<IItunesPodcastUpdater> _logger;
 
-        private static readonly ICollection<Tag> Tags = new List<Tag>();
-
-        public ItunesPodcastUpdater(ILogger<ItunesPodcastUpdater> logger,
-            IDbContextFactory dbContextFactory)
-            : base(logger, dbContextFactory)
+        public ItunesPodcastUpdater(ILogger<IItunesPodcastUpdater> logger,
+            IDbContextFactory dbContextFactory, IItunesQueryService itunesQueryService)
         {
-            Context = dbContextFactory.CreateDbContext();
+            _logger = logger;
+            _itunesQueryService = itunesQueryService;
+            _context = dbContextFactory.CreateDbContext();
         }
 
-        private static ApplicationDbContext Context { get; set; }
-
+     
         public Task UpdateDataAsync()
         {
             return Task.Run(async () =>
             {
-                foreach (var itunesId in GetItunesIds())
+                var listOfItunesIds = GetItunesIds();
+                var existingItunesIds = _context.Podcast.Select(x => x.ItunesId).ToList();
+
+                var podcastToCreate = existingItunesIds.Except(listOfItunesIds).ToList();
+
+                foreach (var itunesId in podcastToCreate)
                 {
-                    Logger.LogInformation("Updating id: " + itunesId);
+                    _logger.LogInformation("Updating id: " + itunesId);
                     await CreatePodcast(itunesId).ConfigureAwait(false);
                 }
 
@@ -48,28 +55,27 @@ namespace DevPodcast.Services.Core.Updaters
 
         private IReadOnlyCollection<string> GetItunesIds()
         {
-            return Context.BasePodcast.Select(x => x.ItunesId).ToImmutableList();
-            ;
+            return _context.BasePodcast.Select(x => x.ItunesId).ToImmutableList();
         }
 
         private async Task CommitData()
         {
-            if (Podcasts.Any())
+            if (_podcasts.Any())
             {
-                await Context.Podcast.AddRangeAsync(Podcasts.Values).ConfigureAwait(false);
-                await Context.SaveChangesAsync().ConfigureAwait(false);
+                await _context.Podcast.AddRangeAsync(_podcasts.Values).ConfigureAwait(false);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
             }
 
 
-            if (Tags.Any())
+            if (_tags.Any())
             {
-                await Context.Tag.AddRangeAsync(Tags).ConfigureAwait(false);
-                await Context.SaveChangesAsync().ConfigureAwait(false);
+                await _context.Tag.AddRangeAsync(_tags).ConfigureAwait(false);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
             }
 
 
-            if (PodcastTags.Values.Any())
-                await SaveTagsAndPodcastTags(Podcasts, PodcastTags).ConfigureAwait(false);
+            if (_podcastTags.Values.Any())
+                await SaveTagsAndPodcastTags(_podcasts, _podcastTags).ConfigureAwait(false);
 
         }
 
@@ -77,7 +83,7 @@ namespace DevPodcast.Services.Core.Updaters
         private async Task SaveTagsAndPodcastTags(IDictionary<string, Podcast> podcasts,
             IDictionary<string, ICollection<string>> tagsToMap)
         {
-            var updatedTags = new List<PodcastTag>();
+            var updatedTags = new List<Tag>();
 
             foreach (var pod in podcasts)
             {
@@ -85,22 +91,26 @@ namespace DevPodcast.Services.Core.Updaters
                 var podcast = pod.Value;
                 var tagDescriptions = tagsToMap[tempId];
 
-                var matchingTags = Context.Tag
+                var matchingTags = _context.Tag
                     .Where(x => tagDescriptions.Contains(x.Description)).ToList();
 
                 foreach (var matchingTag in matchingTags)
-                    updatedTags.Add(new PodcastTag {PodcastId = podcast.Id, TagId = matchingTag.Id});
+                {
+                    var tag = await _context.Tag.Where(x => x.Id == matchingTag.Id).FirstOrDefaultAsync();
+                    tag.Podcasts.Add(podcast);
+                    await _context.SaveChangesAsync();
+               
+                }
+                    
             }
-
-            await Context.PodcastTag.AddRangeAsync(updatedTags).ConfigureAwait(false);
-            await Context.SaveChangesAsync().ConfigureAwait(false);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
 
         private async Task CreatePodcast(string itunesId)
         {
             var result =
-                await QueryService.QueryItunesId(itunesId)
+                await _itunesQueryService.QueryItunesId(itunesId)
                     .ConfigureAwait(true);
 
 
@@ -123,19 +133,19 @@ namespace DevPodcast.Services.Core.Updaters
 
         private BasePodcast GetBasePodcast(string itunesId)
         {
-            return Context.BasePodcast.FirstOrDefault(x => x.ItunesId == itunesId);
+            return _context.BasePodcast.FirstOrDefault(x => x.ItunesId == itunesId);
         }
 
         private bool CheckForExistingPodcast(string itunesId)
         {
-            return Context.Podcast.Any(x => x.ItunesId == itunesId);
+            return _context.Podcast.Any(x => x.ItunesId == itunesId);
         }
 
 
-        private static async Task<Podcast> CreatePodcast(string itunesId, string trackName, PodcastResult podcastResult,
+        private Task<Podcast> CreatePodcast(string itunesId, string trackName, PodcastResult podcastResult,
             BasePodcast basePodcast, string tempId)
         {
-            Logger.LogInformation("Creating new podcast " + trackName);
+            _logger.LogInformation("Creating new podcast " + trackName);
             var podcast = new Podcast();
             podcast.ItunesId = itunesId;
             podcast.CreatedDate = DateTime.Now;
@@ -163,75 +173,83 @@ namespace DevPodcast.Services.Core.Updaters
             podcast.LatestReleaseDate = date;
 
 
-            Podcasts.Add(tempId, podcast);
-            return podcast;
+            _podcasts.Add(tempId, podcast);
+            return Task.FromResult(podcast);
         }
 
-        private static async Task CreatePodcastTags(Podcast podcast, JArray result, string tempId)
+        private Task CreatePodcastTags(Podcast podcast, JArray result, string tempId)
         {
-            if (podcast.Title == "Talk Python To Me - Python conversations for passionate developers")
-                Console.WriteLine("here");
-
-            var podcastTags = new List<string>();
-            var existingTags = new List<Tag>();
-
-            Logger.LogInformation("Creating podcast tags");
-
-            foreach (var genreResult in result)
+            return Task.Run(() =>
             {
-                dynamic genres = genreResult;
-                JArray data = genres.genres;
-                var listGenres = data.ToList();
-                if (listGenres.Any())
-                    foreach (var genre in listGenres)
-                    {
-                        var tagDescription = genre.Value<string>();
+                if (podcast.Title == "Talk Python To Me - Python conversations for passionate developers")
+                    Console.WriteLine("here");
 
-                        if (Tags.All(x => x.Description != tagDescription))
+                var podcastTags = new List<string>();
+                var existingTags = new List<Tag>();
+
+                _logger.LogInformation("Creating podcast tags");
+
+                foreach (var genreResult in result)
+                {
+                    dynamic genres = genreResult;
+                    JArray data = genres.genres;
+                    var listGenres = data.ToList();
+                    if (listGenres.Any())
+                        foreach (var genre in listGenres)
                         {
-                            var existingTag = Context.Tag.FirstOrDefault(x =>
-                                x.Description == tagDescription);
+                            var tagDescription = genre.Value<string>();
 
-                            if (existingTag == null)
-                                Tags.Add(new Tag { Description = tagDescription });
-                            else
-                                existingTags.Add(existingTag);
+                            if (_tags.All(x => x.Description != tagDescription))
+                            {
+                                var existingTag = _context.Tag.FirstOrDefault(x =>
+                                    x.Description == tagDescription);
+
+                                if (existingTag == null)
+                                    _tags.Add(new Tag { Description = tagDescription });
+                                else
+                                    existingTags.Add(existingTag);
+                            }
+
                         }
-                       
-                    }
-            }
+                }
 
-            Tags.ForEach(tag =>
-            {
-                var tagExists = CheckForExstingPodcastTag(podcast, tag);
-                if (!tagExists && !podcastTags.Contains(tag.Description))
-                    podcastTags.Add(tag.Description);
+                _tags.ForEach(tag =>
+                {
+                    var tagExists = CheckForExstingPodcastTag(podcast, tag);
+                    if (!tagExists && !podcastTags.Contains(tag.Description))
+                        podcastTags.Add(tag.Description);
+                });
+
+                existingTags.ForEach(tag =>
+                {
+                    var tagExists = CheckForExstingPodcastTag(podcast, tag);
+                    if (!tagExists && !podcastTags.Contains(tag.Description))
+                        podcastTags.Add(tag.Description);
+                });
+
+
+                _podcastTags.Add(tempId, podcastTags);
+
+                _logger.LogInformation("Saved tags for podcast: " + podcast.Title);
             });
-
-            existingTags.ForEach(tag =>
-            {
-                var tagExists = CheckForExstingPodcastTag(podcast, tag);
-                if (!tagExists && !podcastTags.Contains(tag.Description))
-                    podcastTags.Add(tag.Description);
-            });
-
-
-            PodcastTags.Add(tempId, podcastTags);
-
-            Logger.LogInformation("Saved tags for podcast: " + podcast.Title);
         }
 
-        private static bool CheckForExstingPodcastTag(Podcast podcast, Tag tag)
+        private bool CheckForExstingPodcastTag(Podcast podcast, Tag tag)
         {
-            var tagExists = podcast.PodcastTags.Any(t =>
-                t.Tag?.Description == tag?.Description);
+            var tagExists = podcast.Tags.Any(t =>
+                t?.Description == tag?.Description);
             return tagExists;
         }
 
 
         public void Dispose()
         {
-            Context.Dispose();
+            _context.Dispose();
         }
+    }
+
+    public interface IItunesPodcastUpdater : IUpdater
+    {
+
     }
 }

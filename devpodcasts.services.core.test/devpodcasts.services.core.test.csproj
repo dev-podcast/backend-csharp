@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\devpodcasts.services.core\DevPodcast.Services.Core.csproj" />
+    <ProjectReference Include="..\devpodcasts.services.core\devpodcasts.services.core.csproj" />
   </ItemGroup>
 
 </Project>

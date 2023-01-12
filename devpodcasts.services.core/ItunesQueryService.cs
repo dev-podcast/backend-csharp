@@ -2,21 +2,31 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
+using System.Net.Http;
 using System.Net;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace DevPodcast.Services.Core
 {
-    public static class QueryService
+    public class ItunesQueryService : IItunesQueryService
     {
         private const string BASE_LOOKUP_URL = "https://itunes.apple.com/lookup/";
 
-        public static async Task<JArray> QueryItunesId(string itunesId)
+        private readonly ILogger _logger;
+        private readonly HttpClient _client;
+        public ItunesQueryService(ILogger<IItunesQueryService> logger, HttpClient client)
+        {
+            _logger= logger;
+            _client= client;
+        } 
+
+        public async Task<JArray> QueryItunesId(string itunesId)
         {
             var maxTries = 3;
             var remainingTries = maxTries;
@@ -27,14 +37,14 @@ namespace DevPodcast.Services.Core
                 {
                     Thread.Sleep(2000);
                     var url = BASE_LOOKUP_URL + itunesId;
-                    var request = (HttpWebRequest) WebRequest.Create(url);
 
-                    var response = await request.GetResponseAsync().ConfigureAwait(false);
+                    var response = await _client.GetAsync(url).ConfigureAwait(false);
 
-                    if (response == null) return new JArray();
-
-                    if (response is HttpWebResponse wResponse && wResponse.StatusCode == HttpStatusCode.OK)
-                        using (var stream = wResponse.GetResponseStream())
+                    if (!response.IsSuccessStatusCode) return new JArray();
+                   
+                    if(response.StatusCode == HttpStatusCode.OK)
+                    {
+                        using (var stream = response.Content.ReadAsStream())
                         {
                             using (var raw = new StreamReader(stream, Encoding.UTF8))
                             {
@@ -46,7 +56,7 @@ namespace DevPodcast.Services.Core
                                 }
                             }
                         }
-
+                    }         
                     return new JArray();
                 }
                 catch (Exception e)
@@ -58,8 +68,7 @@ namespace DevPodcast.Services.Core
             return new JArray();
         }
 
-
-        public static IObservable<JArray> QueryItunesIdObservable(string itunesId)
+        public IObservable<JArray> QueryItunesIdObservable(string itunesId)
         {
             return Observable.StartAsync(async () =>
             {
@@ -104,8 +113,7 @@ namespace DevPodcast.Services.Core
             });
         }
 
-
-        public static async Task<IReadOnlyCollection<XElement>> QueryFeedUrl(string url)
+        public async Task<IReadOnlyCollection<XElement>> QueryFeedUrl(string url)
         {
             var maxTries = 3;
             var remainingTries = maxTries;
@@ -139,5 +147,10 @@ namespace DevPodcast.Services.Core
             } while (remainingTries > 0);
             return new List<XElement>();
         }
+    }
+    public interface IItunesQueryService
+    {
+        Task<JArray> QueryItunesId(string itunesId);
+        Task<IReadOnlyCollection<XElement>> QueryFeedUrl(string url);
     }
 }
