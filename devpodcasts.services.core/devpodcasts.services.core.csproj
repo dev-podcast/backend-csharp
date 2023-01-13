@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <RuntimeIdentifiers>ubuntu.18.04-x64</RuntimeIdentifiers>
+    <UserSecretsId>f14e526b-ea70-4aa3-847e-69114d0918b8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

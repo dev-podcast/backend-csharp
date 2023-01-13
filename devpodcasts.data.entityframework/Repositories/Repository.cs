@@ -40,9 +40,9 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             return Set.Where(predicate).ToList();
         }
 
-        public virtual Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual Task<List<TEntity>> GetAllAsync()
         {
-            return Set.Where(predicate).ToListAsync();
+            return Set.ToListAsync();
         }
 
         public virtual Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)

@@ -25,7 +25,7 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             return Set.Where(predicate).Include(e => e.Tags).SingleOrDefaultAsync();
         }
 
-        public ICollection<Episode> GetRecent(int Id, int numberToTake)
+        public List<Episode> GetRecent(int Id, int numberToTake)
         {
             return Set.Where(e => e.PodcastId == Id).OrderByDescending(p => p.PublishedDate).Include(e => e.Podcast)
                 .Include(e => e.Tags).Take(numberToTake).ToList();
@@ -46,5 +46,16 @@ namespace devpodcasts.Data.EntityFramework.Repositories
         {
             return Set.Where(predicate).Include(e => e.Tags).SingleOrDefaultAsync();
         }
+
+        public Task<List<Episode>> GetByShowIdAsync(int ShowId)
+        {
+            return Set.Where(x => x.PodcastId == ShowId).ToListAsync();
+        }
+
+        public Task<List<Episode>> GetAllBySearch(Expression<Func<Episode, bool>> predicate)
+        {
+            return Set.Where(predicate).ToListAsync();
+        }
+
     }
 }

@@ -26,7 +26,7 @@ namespace devpodcasts.Server.Core.Controllers
         [Route("v1/category/all")]
         public async Task<IActionResult> GetAll()
         {
-            var category = await _unitOfWork.CategoryRepository.GetAllAsync(_ => true);
+            var category = await _unitOfWork.CategoryRepository.GetAllAsync();
 
             var model = _mapper.Map<List<Category>, List<CategoryViewModel>>(category);
             return Ok(model);

@@ -34,7 +34,7 @@ namespace devpodcasts.Server.Core.Controllers
         [Route("v1/podcast/all")]
         public async Task<IActionResult> GetAll()
         {
-            var podcasts = await _unitOfWork.PodcastRepository.GetAllAsync(_ => true);
+            var podcasts = await _unitOfWork.PodcastRepository.GetAllAsync();
             var model = _mapper.Map<ICollection<Podcast>, List<PodcastViewModel>>(podcasts);
             return Ok(model);
         }
