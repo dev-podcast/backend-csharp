@@ -20,12 +20,11 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             return SingleQuery(predicate).SingleOrDefault();
         }
 
-        public override Task<List<Podcast>> GetAllAsync(Expression<Func<Podcast, bool>> predicate)
+        public Task<List<Podcast>> GetAllAsync(int id)
         {
-            return (from pod in _context.Podcast
-                    .Include(p => p.Tags)
-                    .Include(p => p.Categories)
-                select pod).Where(predicate).ToListAsync();
+            return Set.Where(p => p.Id == id)
+                .Include(p => p.Tags)
+                .Include(p => p.Categories).ToListAsync(); ;   
         }
 
     
@@ -34,14 +33,19 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             return SingleQuery(predicate).SingleOrDefaultAsync();
         }
 
-        public async Task<ICollection<Podcast>> GetRecentAsync(int numberToTake)
+        public Task<List<Podcast>> GetRecentAsync(int numberToTake)
         {
-            return await RecentQuery(numberToTake).ToListAsync();
+            return RecentQuery(numberToTake).ToListAsync();
         }
 
-        public async Task<ICollection<Podcast>> GetRecentAsync(int podcastLimit, int episodeLimit)
+        public Task<List<Podcast>> GetRecentAsync(int podcastLimit, int episodeLimit)
         {
-            return await RecentQuery(podcastLimit, episodeLimit).ToListAsync();
+            return RecentQuery(podcastLimit, episodeLimit).ToListAsync();
+        }
+
+        public Task<List<Podcast>> GetAllBySearch(Expression<Func<Podcast, bool>> predicate)
+        {
+            return Set.Where(predicate).ToListAsync();
         }
 
         private IQueryable<Podcast> RecentQuery(int podcastLimit = 15, int episodeLimit = 15)

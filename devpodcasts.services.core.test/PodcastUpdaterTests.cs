@@ -1,8 +1,7 @@
 ﻿using devpodcasts.Services.Core.JsonObjects;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SharpTestsEx;
 using Xunit;
+using FluentAssertions;
 
 namespace devpodcasts.Services.Core.Test
 {
@@ -27,9 +26,7 @@ namespace devpodcasts.Services.Core.Test
             {
                 var phpPodcast = jArray[0].ToObject<PodcastResult>();
                 phpPodcast.TrackName.ToLowerInvariant()
-                    .Should()
-                    .Be
-                    .EqualTo("Lately in PHP podcast".ToLowerInvariant());
+                    .Should().Be("Lately in PHP podcast".ToLowerInvariant());
             }
            
         }

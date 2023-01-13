@@ -46,7 +46,7 @@ namespace devpodcasts.Data.EntityFramework
             _episodeRepository = null;
             _tagRepository = null;
             _categoryRepository = null;     
-            _context.Dispose();
+           // _context.Dispose();
         }
 
         #region Fields

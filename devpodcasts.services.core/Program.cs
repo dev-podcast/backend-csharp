@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Net.Http;
 
 namespace devpodcasts.Services.Core
 {
@@ -69,6 +70,7 @@ namespace devpodcasts.Services.Core
             var config = LoadConfiguration();
 
             services.AddSingleton(config);
+            services.AddHttpClient<IHttpClientFactory>();
             services.AddTransient<IDbContextFactory, DbContextFactory>();
             services.AddSingleton<IItunesHttpClient, ItunesHttpClient>();
             services.AddTransient<IItunesPodcastUpdater, ItunesPodcastUpdater>();

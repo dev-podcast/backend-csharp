@@ -17,12 +17,12 @@ namespace devpodcasts.Data.EntityFramework.Repositories
         {
             _searchResult = new SearchResult
             {
-                Podcasts = await unitOfWork.PodcastRepository.GetAllAsync(p => p.Title.Contains(searchString)
+                Podcasts = await unitOfWork.PodcastRepository.GetAllBySearch(p => p.Title.Contains(searchString)
                                                                                || p.Description.Contains(
                                                                                    searchString) ||
                                                                                p.Artists.Contains(
                                                                                    searchString)),
-                Episodes = await unitOfWork.EpisodeRepository.GetAllAsync(e => e.Title.Contains(searchString))
+                Episodes = await unitOfWork.EpisodeRepository.GetAllBySearch(e => e.Title.Contains(searchString))
             };
 
             return _searchResult;

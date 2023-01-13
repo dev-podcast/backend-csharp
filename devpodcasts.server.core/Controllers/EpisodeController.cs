@@ -34,7 +34,7 @@ namespace devpodcasts.Server.Core.Controllers
         [Route("v1/all/{showId}")]
         public async Task<IActionResult> GetAllEpisodes(int showId)
         {
-            var episodes = await _unitOfWork.EpisodeRepository.GetAllAsync(x => x.PodcastId == showId);
+            var episodes = await _unitOfWork.EpisodeRepository.GetByShowIdAsync(showId);
             var model = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episodes);
             return Ok(model);
         }
