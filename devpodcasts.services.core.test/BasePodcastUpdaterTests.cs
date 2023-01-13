@@ -1,19 +1,9 @@
-﻿using System.Linq;
-using devpodcasts.Services.Core.JsonObjects;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Xunit;
-using System.Threading.Tasks;
+﻿using Xunit;
 using devpodcasts.Services.Core.Updaters;
 using Moq;
 using Microsoft.Extensions.Logging;
 using devpodcasts.common.Interfaces;
-using FluentAssertions;
-using devpodcasts.Data.EntityFramework;
-using Microsoft.EntityFrameworkCore;
-using devpodcasts.Domain.Entities;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace devpodcasts.Services.Core.Test
 {
