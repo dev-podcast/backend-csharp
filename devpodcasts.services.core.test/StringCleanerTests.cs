@@ -1,5 +1,5 @@
 ﻿using devpodcasts.Services.Core.Utils;
-using SharpTestsEx;
+using FluentAssertions;
 using Xunit;
 
 namespace devpodcasts.Services.Core.Test
@@ -11,7 +11,7 @@ namespace devpodcasts.Services.Core.Test
         public void When_string_includes_html_Then_remove_it(string value)
         {
             var cleanedString = value.CleanHtml();
-            cleanedString.Should().Be.EqualTo("Get up and Code Podcast podcast");
+            cleanedString.Should().Be("Get up and Code Podcast podcast");
         }
 
 
@@ -20,7 +20,7 @@ namespace devpodcasts.Services.Core.Test
         public void When_string_contains_the_word_podcast_Then_remove_it(string value)
         {
             var cleanedString = value.RemovePodcastFromName();
-            cleanedString.Should().Be.EqualTo("Get up and Code");
+            cleanedString.Should().Be("Get up and Code");
         }
 
         [Theory]
@@ -28,7 +28,7 @@ namespace devpodcasts.Services.Core.Test
         public void When_string_contains_the_word_title_Then_remove_it(string value)
         {
             var cleanedString = value.RemoveTitleFromName();
-            cleanedString.Should().Be.EqualTo("Get up and Code");
+            cleanedString.Should().Be("Get up and Code");
         }
     }
 }

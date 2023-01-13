@@ -18,9 +18,9 @@ namespace devpodcasts.Services.Core.Updaters
     public class BasePodcastUpdater : IBasePodcastUpdater
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<IBasePodcastUpdater> _logger;
+        private readonly ILogger<BasePodcastUpdater> _logger;
   
-        public BasePodcastUpdater(ILogger<IBasePodcastUpdater> logger, IDbContextFactory dbContextFactory)
+        public BasePodcastUpdater(ILogger<BasePodcastUpdater> logger, IDbContextFactory dbContextFactory)
         {
             _logger = logger;
             _context = dbContextFactory.CreateDbContext();
