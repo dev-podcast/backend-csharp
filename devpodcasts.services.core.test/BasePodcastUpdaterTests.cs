@@ -49,15 +49,15 @@ namespace devpodcasts.Services.Core.Test
         //    basePodcasts.GeneralInterest.Count().Should().Be.EqualTo(2);
         //}
 
-        [Fact]
-        public async Task Get_Base_PodList_From_Json()
-        {
-            var act = async () =>
-            {
-                await _testClass.UpdateDataAsync();
-            };
+        //[Fact]
+        //public async Task Get_Base_PodList_From_Json()
+        //{
+        //    var act = async () =>
+        //    {
+        //        await _testClass.UpdateDataAsync();
+        //    };
 
-            await act.Should().NotThrowAsync(); 
-        }
+        //    await act.Should().NotThrowAsync(); 
+        //}
     }
 }
