@@ -1,7 +1,7 @@
+using devpodcasts.common.Extensions;
 using devpodcasts.Domain.Entities;
-using devpodcasts.Services.Core.Utils;
 
-namespace devpodcasts.Services.Core.JsonObjects
+namespace devpodcasts.common.JsonObjects
 {
     public static class BasePodcastJsonObjectExtensions
     {

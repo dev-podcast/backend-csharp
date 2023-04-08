@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using devpodcasts.Data.EntityFramework;
 using devpodcasts.Domain.Entities;
-using devpodcasts.Services.Core.Interfaces;
-using devpodcasts.Services.Core.Updaters.Extensions;
 using devpodcasts.common.Interfaces;
 using devpodcasts.common.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using static devpodcasts.Services.Core.Updaters.Extensions.EpisodeConstants;
+using static devpodcasts.common.Constants.EpisodeConstants;
+using devpodcasts.common.Builders;
+using devpodcasts.common.Extensions;
 
-namespace devpodcasts.Services.Core.Updaters
+namespace devpodcasts.common.Updaters
 {
     public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
     {

@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace devpodcasts.Services.Core.Utils
+namespace devpodcasts.common.Extensions
 {
-    public static class StringCleaner
+    public static class StringCleanerExtensions
     {
         private const string UppercasePodcastName = "Podcast";
         private const string LowercasePodcastName = "podcast";
         private const string UppercaseTitleName = "Title";
         private const string LowercaseTitleName = "title";
 
-        public static  string CleanHtml(this string input)
+        public static string CleanHtml(this string input)
         {
             return Regex.Replace(input, "<.*?>", String.Empty).Trim();
         }

@@ -1,5 +1,4 @@
-﻿using devpodcasts.Services.Core.Updaters;
-using devpodcasts.common.Factories;
+﻿using devpodcasts.common.Factories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
