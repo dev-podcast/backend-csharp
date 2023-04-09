@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Reflection;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -43,12 +44,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
      var connStringKey = builder.Configuration.GetSection("ConnectionStrings").GetValue<string>("PodcastDb");
 
      options.EnableSensitiveDataLogging(true);
-     options.UseSqlServer(connStringKey, b => b.MigrationsAssembly("DevPodcast.Data.EntityFramework"));
+     options.UseSqlServer(connStringKey, b => b.MigrationsAssembly("devpodcasts.data.entityframework"));
 });
 
 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{environment}.json", true, true)
+    .AddUserSecrets(typeof(Program).GetTypeInfo().Assembly, optional: false)
     .AddEnvironmentVariables();
 
 var app = builder.Build();

@@ -1,4 +1,4 @@
-﻿using devpodcasts.Services.Core.Utils;
+﻿using devpodcasts.common.Extensions;
 using FluentAssertions;
 using Xunit;
 

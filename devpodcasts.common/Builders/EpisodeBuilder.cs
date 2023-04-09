@@ -1,13 +1,12 @@
-﻿using devpodcasts.common.Constants;
-using devpodcasts.common.Extensions;
-using devpodcasts.Domain.Entities;
+﻿using devpodcasts.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
-using devpodcasts.Domain.Entities;
-using devpodcasts.Services.Core.Utils;
 
-namespace devpodcasts.Services.Core.Updaters.Extensions
+namespace devpodcasts.common.Builders
 {
     public class EpisodeBuilder
     {
@@ -51,7 +50,7 @@ namespace devpodcasts.Services.Core.Updaters.Extensions
                 _audioType = audioType?.Value;
 
                 if (_audioType != null && _audioType.Length > 10)
-                    _audioType = _audioType.Substring(0, 10); 
+                    _audioType = _audioType.Substring(0, 10);
 
                 _audioUrl = audioUrl?.Value;
             }
@@ -87,7 +86,7 @@ namespace devpodcasts.Services.Core.Updaters.Extensions
             if (description != null)
                 _ = description.Value;
             else if (itunesSummary != null)
-               _description = itunesSummary.Value;
+                _description = itunesSummary.Value;
             else if (summary != null) _description = summary.Value;
 
             if (_description != null)
@@ -99,7 +98,7 @@ namespace devpodcasts.Services.Core.Updaters.Extensions
         public EpisodeBuilder AddAudioDuration(XElement itunesDuration, XElement duration)
         {
             if (itunesDuration != null)
-               _audioDuration = itunesDuration.Value;
+                _audioDuration = itunesDuration.Value;
             else if (duration != null) _audioDuration = duration.Value;
 
             if (_audioDuration != null && _audioDuration.Length > 10)
@@ -107,7 +106,7 @@ namespace devpodcasts.Services.Core.Updaters.Extensions
 
             return this;
         }
-    
+
         public EpisodeBuilder AddPodcast(Podcast podcast)
         {
             if (podcast == null) return this;
@@ -119,16 +118,16 @@ namespace devpodcasts.Services.Core.Updaters.Extensions
         {
             return new Episode()
             {
-                Title =  _title,
+                Title = _title,
                 ImageUrl = _imageUrl,
-                SourceUrl =  _sourceUrl,
-                AudioType =  _audioType,
+                SourceUrl = _sourceUrl,
+                AudioType = _audioType,
                 AudioUrl = _audioUrl,
                 AudioDuration = _audioDuration,
                 Description = _description,
                 Author = _author,
                 PublishedDate = _publishedDate,
-                PodcastId =  _podcastId,
+                PodcastId = _podcastId,
                 CreatedDate = DateTime.Now
             };
         }

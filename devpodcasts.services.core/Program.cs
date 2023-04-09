@@ -4,9 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using devpodcasts.Data.EntityFramework;
 using devpodcasts.Domain;
-using devpodcasts.Services.Core.Interfaces;
-using devpodcasts.Services.Core.Updaters;
-using devpodcasts.common;
 using devpodcasts.common.Factories;
 using devpodcasts.common.Interfaces;
 using devpodcasts.common.Services;
@@ -15,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Net.Http;
+using System.Reflection;
+using devpodcasts.common.Updaters;
 
 namespace devpodcasts.Services.Core
 {
@@ -57,7 +56,8 @@ namespace devpodcasts.Services.Core
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", true, true)
-                .AddJsonFile($"appsettings.{environmentName}.json", true, true);
+                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+                .AddUserSecrets(typeof(Program).GetTypeInfo().Assembly, optional: false);
 
             var configuration = builder.Build();
 
