@@ -1,18 +1,15 @@
 ﻿using devpodcasts.Data.EntityFramework;
-using devpodcasts.Services.Core.Interfaces;
 using devpodcasts.common.Interfaces;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace devpodcasts.Services.Core.Updaters
-{
+namespace devpodcasts.common.Updaters;
+
     public class DataCleaner : IDataCleaner
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<IDataCleaner> _logger;
+        private readonly ILogger<DataCleaner> _logger;
     
-        public DataCleaner(ILogger<IDataCleaner> logger, IDbContextFactory dbContextFactory)
+        public DataCleaner(ILogger<DataCleaner> logger, IDbContextFactory dbContextFactory)
         {
             _logger = logger;
             _context = dbContextFactory.CreateDbContext();
@@ -46,4 +43,3 @@ namespace devpodcasts.Services.Core.Updaters
     {
 
     }
-}

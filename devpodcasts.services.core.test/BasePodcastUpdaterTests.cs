@@ -1,9 +1,9 @@
 ﻿using Xunit;
-using devpodcasts.Services.Core.Updaters;
 using Moq;
 using Microsoft.Extensions.Logging;
 using devpodcasts.common.Interfaces;
 using Microsoft.Extensions.Configuration;
+using devpodcasts.common.Updaters;
 
 namespace devpodcasts.Services.Core.Test
 {
