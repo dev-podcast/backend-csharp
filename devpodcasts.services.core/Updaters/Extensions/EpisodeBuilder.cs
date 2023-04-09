@@ -1,4 +1,7 @@
-﻿using System;
+﻿using devpodcasts.common.Constants;
+using devpodcasts.common.Extensions;
+using devpodcasts.Domain.Entities;
+using System;
 using System.Linq;
 using System.Xml.Linq;
 using devpodcasts.Domain.Entities;
@@ -88,7 +91,7 @@ namespace devpodcasts.Services.Core.Updaters.Extensions
             else if (summary != null) _description = summary.Value;
 
             if (_description != null)
-                _description = StringCleaner.CleanHtml(_description);
+                _description = StringCleanerExtensions.CleanHtml(_description);
 
             return this;
         }
