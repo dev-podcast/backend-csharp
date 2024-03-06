@@ -6,5 +6,6 @@ namespace devpodcasts.common.Interfaces
     public interface IDbContextFactory
     {
         ApplicationDbContext CreateDbContext();
+        
     }
 }

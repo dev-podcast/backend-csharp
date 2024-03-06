@@ -1,0 +1,6 @@
+@devpodcasts.server.api_HostAddress = http://localhost:5201
+
+GET {{devpodcasts.server.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using devpodcasts.Domain;
 using devpodcasts.Domain.Entities;
+using devpodcasts.Domain.Entities.Dtos;
 using devpodcasts.Server.Core.ViewModels;
 
 namespace devpodcasts.Server.Core.Controllers

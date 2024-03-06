@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <RuntimeIdentifiers>ubuntu.18.04-x64</RuntimeIdentifiers>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <UserSecretsId>f14e526b-ea70-4aa3-847e-69114d0918b8</UserSecretsId>
   </PropertyGroup>
 
@@ -80,6 +81,7 @@
   <ItemGroup>
     <ProjectReference Include="..\devpodcasts.common\devpodcasts.common.csproj" />
     <ProjectReference Include="..\devpodcasts.data.entityframework\devpodcasts.data.entityframework.csproj" />
+    <ProjectReference Include="..\devpodcasts.data.mock\devpodcasts.data.mock.csproj" />
     <ProjectReference Include="..\devpodcasts.domain\devpodcasts.domain.csproj" />
   </ItemGroup>
 

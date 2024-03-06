@@ -1,6 +1,6 @@
 ﻿namespace devpodcasts.common.Interfaces;
 
-public interface IUpdater : IDisposable
+public interface IUpdater
 {
     Task UpdateDataAsync();
 }

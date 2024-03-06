@@ -8,7 +8,7 @@ using devpodcasts.Data.EntityFramework;
 
 #nullable disable
 
-namespace devpodcasts.Data.EntityFramework.Migrations
+namespace devpodcasts.data.entityframework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using devpodcasts.Domain.Entities;
+using devpodcasts.Domain.Entities.Dtos;
 
 namespace devpodcasts.Domain.Interfaces
 {

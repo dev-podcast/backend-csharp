@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    internal class PodcastRepository : Repository<Podcast>, IPodcastRepository
+    public class PodcastRepository : Repository<Podcast>, IPodcastRepository
     {
-        internal PodcastRepository(ApplicationDbContext context) : base(context)
+        public PodcastRepository(ApplicationDbContext context) : base(context)
         {
         }
 
@@ -66,9 +66,6 @@ namespace devpodcasts.Data.EntityFramework.Repositories
                 LatestReleaseDate = x.LatestReleaseDate
             }).OrderByDescending(x => x.LatestReleaseDate).Take(podcastLimit);
         }
-
-
- 
 
         private IQueryable<Podcast> SingleQuery(Expression<Func<Podcast, bool>> predicate)
         {

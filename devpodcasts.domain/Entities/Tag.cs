@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace devpodcasts.Domain.Entities
 {
-    public partial class Tag
+    public class Tag
     {
         public Tag()
         {

@@ -1,32 +1,38 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using devpodcasts.common.Factories;
 using devpodcasts.common.Interfaces;
+using devpodcasts.data.mock;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace devpodcasts.Services.Core.Test
 {
-    public class DbFixture
+    public class DbFixture : IDisposable
     {
+        public IDbContext DbContext { get; }
         public DbFixture()
         {
-            var services = new ServiceCollection();
+            var serviceCollection  = new ServiceCollection();
 
             Configuration = LoadConfiguration();
 
-            services.AddTransient<IDbContextFactory, DbContextFactory>();
-            services.AddLogging(loggingBuilder =>
+            // Register the DbContextFactory using MockDbContext
+            serviceCollection.AddDbContextFactory<MockDbContext>();
+            serviceCollection.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.AddConfiguration(Configuration.GetSection("Logging"));
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddDebug();
             }).Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
 
-            ServiceProvider = services.BuildServiceProvider();
+            serviceCollection.AddSingleton<IPodcastGenerator, PodcastGenerator>();
+            serviceProvider = serviceCollection.BuildServiceProvider();
         }
 
-        public ServiceProvider ServiceProvider { get; private set; }
+        public ServiceProvider serviceProvider { get; private set; }
         public IConfiguration Configuration { get; private set; }
         public static IConfiguration LoadConfiguration()
         {
@@ -34,6 +40,16 @@ namespace devpodcasts.Services.Core.Test
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             return builder.Build();
+        }
+        
+        public void Dispose()
+        {
+            // Clean up resources if needed
+            // For example, dispose the DbContext
+            if (DbContext is IDisposable disposableDbContext)
+            {
+                disposableDbContext.Dispose();
+            }
         }
     }
 }
