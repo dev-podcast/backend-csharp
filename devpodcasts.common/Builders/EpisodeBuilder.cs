@@ -12,8 +12,9 @@ namespace devpodcasts.common.Builders
 {
     public class EpisodeBuilder
     {
+        private Guid _id;
         private string? _title;
-        private int _podcastId;
+        private Guid _podcastId;
         private string? _author;
         private string? _audioUrl;
         private string? _audioType;
@@ -23,6 +24,11 @@ namespace devpodcasts.common.Builders
         private string? _imageUrl;
         private string? _sourceUrl;
 
+        public EpisodeBuilder WithId(Guid id)
+        {
+            _id = Guid.NewGuid();
+            return this;
+        }
         public EpisodeBuilder AddTitle(string? title)
         {
             if (title == null) return this;
@@ -126,6 +132,7 @@ namespace devpodcasts.common.Builders
         {
             return new Episode()
             {
+                Id = _id,
                 Title = _title,
                 ImageUrl = _imageUrl,
                 SourceUrl = _sourceUrl,

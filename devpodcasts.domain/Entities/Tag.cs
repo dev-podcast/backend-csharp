@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace devpodcasts.Domain.Entities
@@ -12,7 +13,7 @@ namespace devpodcasts.Domain.Entities
         }
 
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         public string Description { get; set; }
 

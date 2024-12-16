@@ -19,61 +19,62 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             _context = context;
         }
 
-        protected DbSet<TEntity> Set => _set ?? (_set = _context.Set<TEntity>());
+      //  protected DbSet<TEntity> Set => _set ?? (_set = _context.Set<TEntity>());
 
         public void Add(TEntity entity)
         {
-            Set.Add(entity);
+            
+            _context.Set<TEntity>().Add(entity);
         }
 
         public ValueTask<EntityEntry<TEntity>> AddAsync(TEntity entity)
         {
-            return Set.AddAsync(entity);
+            return _context.Set<TEntity>().AddAsync(entity);
         }
 
         public void AddRange(IEnumerable<TEntity> entities)
         {
-            Set.AddRange(entities);
+            _context.Set<TEntity>().AddRange(entities);
         }
 
         public Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
-            return Set.AddRangeAsync(entities);
+            return _context.Set<TEntity>().AddRangeAsync(entities);
         }
 
         public virtual TEntity Get(Expression<Func<TEntity, bool>> condition)
         {
-            return Set.Where(condition).SingleOrDefault();
+            return _context.Set<TEntity>().Where(condition).SingleOrDefault();
         }
 
         public virtual ICollection<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate)
         {
-            return Set.Where(predicate).ToList();
+            return _context.Set<TEntity>().Where(predicate).ToList();
         }
 
         public virtual Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return Set.Where(predicate).ToListAsync();
+            return _context.Set<TEntity>().Where(predicate).ToListAsync();
         }
 
         public virtual Task<List<TEntity>> GetAllAsync()
         {
-            return Set.ToListAsync();
+            return _context.Set<TEntity>().ToListAsync();
         }
 
         public virtual Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return Set.Where(predicate).SingleOrDefaultAsync();
+            return _context.Set<TEntity>().Where(predicate).SingleOrDefaultAsync();
         }
 
         public void Remove(TEntity entity)
         {
-            Set.Remove(entity);
+            _context.Set<TEntity>().Remove(entity);
         }
 
         public void RemoveRange(IEnumerable<TEntity> entities)
         {
-            Set.RemoveRange(entities);
+            _context.Set<TEntity>().RemoveRange(entities);
         }
 
         public void Save()
@@ -88,7 +89,7 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public void Update(TEntity entity)
         {
-            Set.Entry(entity).State = EntityState.Modified;
+            _context.Set<TEntity>().Update(entity);
         }
     }
 }

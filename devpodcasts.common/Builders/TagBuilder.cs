@@ -16,7 +16,7 @@ public class TagBuilder
         return new TagBuilder();
     }
 
-    public TagBuilder WithId(int id)
+    public TagBuilder WithId(Guid id)
     {
         _tag.Id = id;
         return this;

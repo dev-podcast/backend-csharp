@@ -15,12 +15,12 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public ICollection<string> GetAllItunesIds()
         {
-            return Set.Select(x => x.ItunesId).ToList();
+            return _context.Set<BasePodcast>().Select(x => x.ItunesId).ToList();
         }
 
         public Task<List<string>> GetAllItunesIdsAsync()
         {
-            return Set.Select(x => x.ItunesId).ToListAsync();
+            return _context.Set<BasePodcast>().Select(x => x.ItunesId).ToListAsync();
         }
     }
 }

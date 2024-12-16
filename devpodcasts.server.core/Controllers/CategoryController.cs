@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/category/{categoryId}")]
-        public async Task<IActionResult> GetById(int categoryId)
+        public async Task<IActionResult> GetById(Guid categoryId)
         {
             var category = await _unitOfWork.CategoryRepository.GetAsync(t => t.Id == categoryId);
 
@@ -55,7 +56,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/category/search/{categoryId}/{type}")]
-        public async Task<IActionResult> GetByIdAndType(int categoryId, int type)
+        public async Task<IActionResult> GetByIdAndType(Guid categoryId, int type)
         {
             SearchResult searchResult = new SearchResult();
             var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == categoryId);

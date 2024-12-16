@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using devpodcasts.common.Extensions;
+using devpodcasts.Domain;
 using devpodcasts.Domain.Interfaces;
 
 namespace devpodcasts.common.Updaters;
@@ -15,14 +16,18 @@ public class PodCategoriesUpdater : IPodCategoriesUpdater
     private readonly ILogger<IPodCategoriesUpdater> _logger;
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private ICollection<Category> _categories { get; } = new List<Category>();
 
-    public PodCategoriesUpdater(ILogger<IPodCategoriesUpdater> logger, IDbContextFactory<ApplicationDbContext> dbContextFactory, ICategoryRepository categoryRepository)
+    public PodCategoriesUpdater(ILogger<IPodCategoriesUpdater> logger, 
+        IDbContextFactory<ApplicationDbContext> dbContextFactory, 
+        ICategoryRepository categoryRepository,
+        IUnitOfWork unitOfWork)
     {
         _logger = logger;
         _dbContextFactory = dbContextFactory;
         _categoryRepository = categoryRepository;
-       
+        _unitOfWork = unitOfWork;
     }
 
     public async Task UpdateDataAsync()
@@ -44,43 +49,45 @@ public class PodCategoriesUpdater : IPodCategoriesUpdater
             var tasks = new List<Task>();
 
 
+            var context = await _dbContextFactory.CreateDbContextAsync();
             foreach(var kvp in dictionary)
             {
-                var context = _dbContextFactory.CreateDbContext();
+                
 
-                var podcastId = kvp.Key;
+                var externalPodcastId = kvp.Key;
                 var categories = JArray.Parse(kvp.Value.ToString()).ToList();
-                var podcast = await context.Podcast.Where(x => x.Id == Convert.ToInt32(podcastId, CultureInfo.InvariantCulture)).FirstOrDefaultAsync();
+                //var podcast = await context.Podcast.Where(x => x.Id == Convert.ToInt32(podcastId, CultureInfo.InvariantCulture)).FirstOrDefaultAsync();
 
+                var podcast = await _unitOfWork.PodcastRepository.GetAsync(x =>
+                    x.ExternalId == int.Parse(externalPodcastId, CultureInfo.InvariantCulture));
+                
+                
                 if(podcast == null) { continue; }
 
-                var catList = categories.Select(cat => Convert.ToInt32(cat, CultureInfo.InvariantCulture)).ToList();
-                var cats = _categoryRepository.GetAll(cat => catList.Contains(cat.Id));
+                var catList = categories.Select(cat => cat).ToList();
+                var cats = await _unitOfWork.CategoryRepository.GetAllAsync(cat => catList.Contains(cat.Id));
+             //   var cats = _categoryRepository.GetAll(cat => catList.Contains(cat.Id));
 
                 if(cats.Any())
                 {
                     _logger.LogInformation($"{catList.Count} categories");
                     foreach(var cat in cats)
                     {
-                        cat.Podcasts.Add(podcast);
-                        await context.SaveChangesAsync();
+                        await _unitOfWork.PodcastRepository.AddAsync(podcast);
+                        await _unitOfWork.PodcastRepository.SaveAsync();
+                     //   cat.Podcasts.Add(podcast);
+                       // await context.SaveChangesAsync();
                     }
                 }else
                 {
                     _logger.LogInformation("Could not find categories to update");
                 }
 
-                await context.DisposeAsync();
+              
             }
-
-                
-
-          
-
-
-
-
-
+            
+            await context.DisposeAsync();
+            
             //foreach (var kvp in dictionary)
             //    tasks.Add(ProcessCategoryAsync(kvp));
 
@@ -109,7 +116,7 @@ public class PodCategoriesUpdater : IPodCategoriesUpdater
             _logger.LogInformation("********Updating: " + podcast.Title);
             catArray.ForEach(async cat =>
             {
-                var catId = Convert.ToInt32(cat, CultureInfo.InvariantCulture);
+                var catId = Guid.Parse(cat.Value<string>() ?? string.Empty);
               
                     var category = await context.Category.Where(x => x.Id == catId).SingleOrDefaultAsync();
                     if (category != null)

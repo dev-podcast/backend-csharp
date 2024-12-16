@@ -15,8 +15,7 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "BasePodcast",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PodcastSite = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -32,8 +31,7 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "Category",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -45,8 +43,8 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "Podcast",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExternalId = table.Column<int>(type: "int", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -68,8 +66,7 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "Tag",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -81,8 +78,8 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "CategoryPodcast",
                 columns: table => new
                 {
-                    CategoriesId = table.Column<int>(type: "int", nullable: false),
-                    PodcastsId = table.Column<int>(type: "int", nullable: false)
+                    CategoriesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PodcastsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,8 +102,7 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "Episode",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Author = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -117,7 +113,7 @@ namespace devpodcasts.data.entityframework.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SourceUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PodcastId = table.Column<int>(type: "int", nullable: false)
+                    PodcastId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -134,8 +130,8 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "PodcastTag",
                 columns: table => new
                 {
-                    PodcastsId = table.Column<int>(type: "int", nullable: false),
-                    TagsId = table.Column<int>(type: "int", nullable: false)
+                    PodcastsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -158,8 +154,8 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "CategoryEpisode",
                 columns: table => new
                 {
-                    CategoriesId = table.Column<int>(type: "int", nullable: false),
-                    EpisodesId = table.Column<int>(type: "int", nullable: false)
+                    CategoriesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EpisodesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -182,8 +178,8 @@ namespace devpodcasts.data.entityframework.Migrations
                 name: "EpisodeTag",
                 columns: table => new
                 {
-                    EpisodesId = table.Column<int>(type: "int", nullable: false),
-                    TagsId = table.Column<int>(type: "int", nullable: false)
+                    EpisodesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {

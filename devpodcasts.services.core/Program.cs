@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using devpodcasts.Data.EntityFramework;
+﻿using devpodcasts.Data.EntityFramework;
 using devpodcasts.Domain;
 using devpodcasts.common.Factories;
 using devpodcasts.common.Interfaces;
@@ -24,87 +20,75 @@ namespace devpodcasts.Services.Core
 {
     internal class Program
     {
+        private static IConfiguration _configuration;
+
         public static void Main(string[] args)
         {
-            Task.Run(() =>
-            {
-
-                try
-                {
-                    var serviceCollection = ConfigureServices();
-                    var serviceProvider = serviceCollection.BuildServiceProvider();
-
-                    var serviceRunner = serviceProvider.GetService<ServiceRunner>();
-
-                    serviceRunner.RunAsync(GetUpdaters(serviceProvider)).Wait();
-                } catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-                
-            }).Wait();
-        }
-        
-        private static IConfiguration LoadConfiguration()
-        {
-           
+            _configuration = LoadConfiguration();
 
             Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(_configuration)
+                .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .CreateBootstrapLogger();
-            
+                .CreateLogger();
+
+
+            try
+            {
+                Log.Information("Starting application");
+
+                var serviceCollection = ConfigureServices();
+                var serviceProvider = serviceCollection.BuildServiceProvider();
+
+                Task.Run(async () => await RunApplication(serviceProvider)).Wait();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application terminated unexpectedly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+        }
+
+        private static IConfiguration LoadConfiguration()
+        {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            var builder = new ConfigurationBuilder()
+            return new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", true, true)
-                .AddUserSecrets(typeof(Program).GetTypeInfo().Assembly, optional: false);
-            
-            return builder.Build();
+                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+                .AddUserSecrets(typeof(Program).GetTypeInfo().Assembly, optional: false).Build();
         }
 
         private static IServiceCollection ConfigureServices()
         {
             var services = new ServiceCollection();
-            var config = LoadConfiguration();
             
-            services.AddCustomServices(config);
-            var connString = config.GetSection("ConnectionStrings").GetSection("PodcastDb").Value;
-            
-
-            //services.AddHttpClient<IHttpClientFactory>();
-            services.AddHttpClient<IItunesHttpClient, ItunesHttpClient>().ConfigureHttpClient(options =>
-            {
-                options.BaseAddress = new Uri("https://itunes.apple.com/lookup/");
-            });
-           
-                    
-
-            services.AddSingleton<IItunesHttpClient, ItunesHttpClient>();
-           
-            services.AddSingleton<IItunesPodcastUpdater, ItunesPodcastUpdater>();
-            services.AddTransient<IITunesEpisodeUpdater, ItunesEpisodeUpdater>();
-        //    services.AddSingleton<IBasePodcastUpdater, BasePodcastUpdater>();
-        //    services.AddSingleton<IPodCategoriesUpdater, PodCategoriesUpdater>();
-            services.AddSingleton<IDataCleaner, DataCleaner>();
-            services.AddSingleton<IServiceRunner, ServiceRunner>();
-            
+            services.AddCustomServices(_configuration);
+            var connString = _configuration.GetSection("ConnectionStrings:PodcastDb").Value;
             // Configure the IDbContext based on a configuration setting or environment variable
-            if (config["UseMockDbContext"] == "true")
-            {
+            var useMockDb = _configuration["UseMockDbContext"];
 
+            if (useMockDb == "true")
+            {
                 services.AddSingleton<IDbContext, MockDbContext>();
                 services.AddDbContextFactory<MockDbContext>();
             }
             else
             {
-                services.AddSingleton<ICategoryRepository, CategoryRepository>();
-                services.AddSingleton<IBasePodcastRepository, BasePodcastRepository>();
-                services.AddSingleton<IPodcastRepository, PodcastRepository>();
-                services.AddSingleton<ITagRepository, TagRepository>();
-                services.AddSingleton<IDbContextFactory, DbContextFactory>();   
+                services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+                services.AddScoped<ICategoryRepository, CategoryRepository>();
+                services.AddScoped<IBasePodcastRepository, BasePodcastRepository>();
+                services.AddScoped<IEpisodeRepository, EpisodeRepository>();
+                services.AddScoped<IPodcastRepository, PodcastRepository>();
+                services.AddScoped<ITagRepository, TagRepository>();
+                services.AddScoped<IDbContextFactory, DbContextFactory>();
                 services.AddScoped<IUnitOfWork, UnitOfWork>();
-                services.AddDbContextFactory<ApplicationDbContext>(options =>
+
+                services.AddDbContext<ApplicationDbContext>(options =>
                 {
                     options.UseSqlServer(connString, op =>
                     {
@@ -114,29 +98,80 @@ namespace devpodcasts.Services.Core
                 });
             }
 
+            services.AddHttpClient<IItunesHttpClient, ItunesHttpClient>().ConfigureHttpClient(options =>
+            {
+                options.BaseAddress = new Uri("https://itunes.apple.com/lookup/");
+            });
+
+
+            services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddSingleton<IItunesHttpClient, ItunesHttpClient>();
+            services.AddSingleton<IItunesPodcastUpdater, ItunesPodcastUpdater>();
+            services.AddTransient<IITunesEpisodeUpdater, EpisodeUpdater>();
+            services.AddScoped<IBasePodcastUpdater, BasePodcastUpdater>();
+            services.AddSingleton<IPodCategoriesUpdater, PodCategoriesUpdater>();
+            services.AddSingleton<IDataCleaner, DataCleaner>();
+            services.AddSingleton<IServiceRunner, ServiceRunner>();
 
             services.AddLogging(loggingBuilder =>
             {
+                loggingBuilder.ClearProviders();
                 loggingBuilder.AddSerilog();
-                loggingBuilder.AddConsole();
-                loggingBuilder.AddConfiguration(config.GetSection("Serilog"));
-            }).Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Debug);
+            });
 
-
-          
             return services;
         }
-        
+
         private static List<IUpdater> GetUpdaters(IServiceProvider serviceProvider)
         {
-            return new List<IUpdater>
-            {
-                serviceProvider.GetRequiredService<IPodCategoriesUpdater>(),
+            return
+            [
                 serviceProvider.GetRequiredService<IBasePodcastUpdater>(),
+                // serviceProvider.GetRequiredService<IPodCategoriesUpdater>(),
                 serviceProvider.GetRequiredService<IItunesPodcastUpdater>(),
                 serviceProvider.GetRequiredService<IITunesEpisodeUpdater>(),
                 serviceProvider.GetRequiredService<IDataCleaner>()
-            };
+            ];
+        }
+
+        private static async Task RunApplication(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                var databaseService = serviceProvider.GetRequiredService<IDatabaseService>();
+
+                Console.WriteLine("Checking if the database exists...");
+                if (!await databaseService.CanConnectAsync())
+                {
+                    Console.WriteLine("Database does not exist. Creating database...");
+                    await databaseService.MigrateAsync();
+                    Console.WriteLine("Database created and migrations applied successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Database exists.");
+                    var pendingMigrations = await databaseService.GetPendingMigrationsAsync();
+                    if (pendingMigrations.Any())
+                    {
+                        Console.WriteLine("Applying pending migrations...");
+                        await databaseService.MigrateAsync();
+                        Console.WriteLine("Migrations applied successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No pending migrations.");
+                    }
+                }
+
+                var serviceRunner = serviceProvider.GetRequiredService<IServiceRunner>();
+                var updaters = GetUpdaters(serviceProvider);
+                await serviceRunner.RunAsync(updaters);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred during application execution");
+                throw;
+            }
         }
     }
 }

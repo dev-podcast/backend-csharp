@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/{showId}/{episodeId}")]
-        public async Task<IActionResult> GetEpisode(int showId, int episodeId)
+        public async Task<IActionResult> GetEpisode(Guid showId, Guid episodeId)
         {
             var episode = await _unitOfWork.EpisodeRepository.GetAsync(x => x.PodcastId == showId && x.Id == episodeId);
             var model = _mapper.Map<Episode, EpisodeViewModel>(episode);
@@ -32,7 +33,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/all/{showId}")]
-        public async Task<IActionResult> GetAllEpisodes(int showId)
+        public async Task<IActionResult> GetAllEpisodes(Guid showId)
         {
             var episodes = await _unitOfWork.EpisodeRepository.GetByShowIdAsync(showId);
             var model = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episodes);
@@ -41,7 +42,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/recent/{showId}")]
-        public async Task<IActionResult> Recent(int showId)
+        public async Task<IActionResult> Recent(Guid showId)
         {
             var episodes = await _unitOfWork.EpisodeRepository.GetRecentAsync(showId, 15);
             var model = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episodes);
@@ -50,7 +51,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/recent/{showId}/{limit}")]
-        public async Task<IActionResult> Recent(int showId, int limit)
+        public async Task<IActionResult> Recent(Guid showId, int limit)
         {
             var episodes = await _unitOfWork.EpisodeRepository.GetRecentAsync(showId, limit);
             var model = _mapper.Map<List<Episode>, List<EpisodeViewModel>>(episodes);

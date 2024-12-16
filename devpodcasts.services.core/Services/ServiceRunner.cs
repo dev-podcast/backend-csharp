@@ -10,15 +10,10 @@ public interface IServiceRunner
     Task RunAsync(ICollection<IUpdater> updaters);
 }
 
-public class ServiceRunner : IServiceRunner
+public class ServiceRunner(ILogger<ServiceRunner> logger) : IServiceRunner
 {
-    private readonly ILogger<ServiceRunner> _logger;
+    private readonly ILogger<ServiceRunner> _logger = logger;
 
-
-    public ServiceRunner(ILogger<ServiceRunner> logger)
-    {
-        _logger = logger;
-    }
 
     public async Task RunAsync(ICollection<IUpdater> updaters)
     {

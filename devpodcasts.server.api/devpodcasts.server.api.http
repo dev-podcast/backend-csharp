@@ -1,6 +1,13 @@
 @devpodcasts.server.api_HostAddress = http://localhost:5201
+@podcastId = 204
 
 GET {{devpodcasts.server.api_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcasts/
+Accept: application/json
+
+###
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcast{{podcastId}}
+Accept: application/json

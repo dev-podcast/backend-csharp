@@ -1,4 +1,5 @@
-﻿using devpodcasts.Domain.Entities;
+﻿using System;
+using devpodcasts.Domain.Entities;
 using devpodcasts.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -13,12 +14,12 @@ namespace devpodcasts.Data.EntityFramework.Repositories
         {
         }
 
-        public ICollection<Podcast> GetByTagId(int tagId)
+        public ICollection<Podcast> GetByTagId(Guid tagId)
         {
             return _context.Tag.Where(x => x.Id == tagId).Select(p => p.Podcasts).SingleOrDefault();          
         }
 
-        public Task<ICollection<Podcast>> GetByTagIdAsync(int tagId)
+        public Task<ICollection<Podcast>> GetByTagIdAsync(Guid tagId)
         {
             return _context.Tag.Where(x => x.Id == tagId).Select(p => p.Podcasts).SingleOrDefaultAsync();
         }

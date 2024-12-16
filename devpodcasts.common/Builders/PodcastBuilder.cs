@@ -11,6 +11,7 @@ namespace devpodcasts.common.Builders
     public class PodcastBuilder
     {
 
+        private Guid _id;
         private string? _title;
         private string? _itunesId;
         private DateTime? _createdDate;
@@ -47,6 +48,12 @@ namespace devpodcasts.common.Builders
                     _title = title;
                 }
             }
+            return this;
+        }
+
+        public PodcastBuilder WithId(Guid id)
+        {
+            _id = Guid.NewGuid();
             return this;
         }
 
@@ -128,6 +135,7 @@ namespace devpodcasts.common.Builders
         {
             return new Podcast
             {
+                Id = _id,
                 ItunesId = _itunesId,
                 CreatedDate = _createdDate.HasValue ? _createdDate.Value : default,
                 Title = _title,

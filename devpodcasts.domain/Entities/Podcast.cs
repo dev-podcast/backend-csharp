@@ -16,7 +16,8 @@ namespace devpodcasts.Domain.Entities
         }
 
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public int ExternalId { get; set; }
         [Required]
         [MaxLength(100)]
         public string Title { get; set; }

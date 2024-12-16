@@ -3,6 +3,7 @@ using System.IO;
 using devpodcasts.common.Factories;
 using devpodcasts.common.Interfaces;
 using devpodcasts.data.mock;
+using devpodcasts.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ namespace devpodcasts.Services.Core.Test
 {
     public class DbFixture : IDisposable
     {
-        public IDbContext DbContext { get; }
+        public MockDbContext DbContext { get; }
         public DbFixture()
         {
             var serviceCollection  = new ServiceCollection();

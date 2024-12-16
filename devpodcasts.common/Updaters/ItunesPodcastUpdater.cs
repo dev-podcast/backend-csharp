@@ -138,10 +138,11 @@ public class ItunesPodcastUpdater : IItunesPodcastUpdater
 
         if(string.IsNullOrEmpty(trackName))
         {
-            _logger.LogInformation("Problem child");
+            return null;
         }
 
         var podcast = new PodcastBuilder()
+            .WithId(Guid.NewGuid())
             .AddItunesId(itunesId)
             .AddCreatedDate(DateTime.Now)
             .AddTitle(trackName, basePodcast)
@@ -163,10 +164,7 @@ public class ItunesPodcastUpdater : IItunesPodcastUpdater
 
     private async Task CreatePodcastTags(Podcast podcast, JArray result)
     {
-        //For debug purposes
-        if (podcast.Title == "Talk Python To Me - Python conversations for passionate developers")
-            Console.WriteLine("here");
-
+        if (podcast == null) return;
         var podcastTags = new List<string>();
         var existingTags = new List<Tag>();
 

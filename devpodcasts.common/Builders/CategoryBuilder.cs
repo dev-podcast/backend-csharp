@@ -16,7 +16,7 @@ public class CategoryBuilder
         return new CategoryBuilder();
     }
 
-    public CategoryBuilder WithId(int id)
+    public CategoryBuilder WithId(Guid id)
     {
         _category.Id = id;
         return this;
@@ -43,6 +43,7 @@ public class CategoryBuilder
     public Category Build()
     {
         // You might want to perform additional validation or configuration here
+        
         return _category;
     }
 }

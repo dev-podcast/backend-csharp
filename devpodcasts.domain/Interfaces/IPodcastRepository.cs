@@ -11,7 +11,7 @@ namespace devpodcasts.Domain.Interfaces
         Task<List<Podcast>> GetRecentAsync(int podcastLimit, int episodeLimit);
         Task<List<Podcast>> GetRecentAsync(int numberToTake);
 
-        Task<List<Podcast>> GetAllAsync(int id);
+        Task<List<Podcast>> GetAllAsync(Guid id);
         Task<List<Podcast>> GetAllBySearch(Expression<Func<Podcast, bool>> predicate);
     }
 }

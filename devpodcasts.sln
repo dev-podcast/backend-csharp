@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devpodcasts.data.mock", "de
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devpodcasts.server.api", "devpodcasts.server.api\devpodcasts.server.api.csproj", "{9B0F0013-29F6-4C84-A2AB-B385CC71B304}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devpodcasts.blazor.ui", "devpodcasts.blazor.ui\devpodcasts.blazor.ui.csproj", "{9DD3856E-4571-4480-B1DD-4A0FFC57CA61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{9B0F0013-29F6-4C84-A2AB-B385CC71B304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B0F0013-29F6-4C84-A2AB-B385CC71B304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B0F0013-29F6-4C84-A2AB-B385CC71B304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DD3856E-4571-4480-B1DD-4A0FFC57CA61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DD3856E-4571-4480-B1DD-4A0FFC57CA61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DD3856E-4571-4480-B1DD-4A0FFC57CA61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DD3856E-4571-4480-B1DD-4A0FFC57CA61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

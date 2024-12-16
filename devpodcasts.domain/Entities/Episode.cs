@@ -13,7 +13,7 @@ namespace devpodcasts.Domain.Entities
         }
 
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         [MaxLength(250)]
         public string Title { get; set; }
@@ -30,7 +30,7 @@ namespace devpodcasts.Domain.Entities
         public string ImageUrl { get; set; }
         public string SourceUrl { get; set; }
         [ForeignKey("Podcast")]
-        public int PodcastId { get; set; }
+        public Guid PodcastId { get; set; }
         public Podcast Podcast { get; set; }
         public ICollection<Tag> Tags { get; set; }
         public ICollection<Category> Categories { get; set; }

@@ -1,4 +1,5 @@
 ﻿using devpodcasts.Domain.Entities;
+using devpodcasts.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace devpodcasts.Data.EntityFramework
