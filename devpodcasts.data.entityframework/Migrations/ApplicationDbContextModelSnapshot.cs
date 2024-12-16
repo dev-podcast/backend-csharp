@@ -8,7 +8,7 @@ using devpodcasts.Data.EntityFramework;
 
 #nullable disable
 
-namespace devpodcasts.Data.EntityFramework.Migrations
+namespace devpodcasts.data.entityframework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -20,15 +20,13 @@ namespace devpodcasts.Data.EntityFramework.Migrations
                 .HasAnnotation("ProductVersion", "7.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
             modelBuilder.Entity("CategoryEpisode", b =>
                 {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoriesId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("EpisodesId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EpisodesId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CategoriesId", "EpisodesId");
 
@@ -39,11 +37,11 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("CategoryPodcast", b =>
                 {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoriesId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("PodcastsId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PodcastsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CategoriesId", "PodcastsId");
 
@@ -54,11 +52,11 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("EpisodeTag", b =>
                 {
-                    b.Property<int>("EpisodesId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EpisodesId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("TagsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("EpisodesId", "TagsId");
 
@@ -69,11 +67,11 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("PodcastTag", b =>
                 {
-                    b.Property<int>("PodcastsId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PodcastsId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("TagsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("PodcastsId", "TagsId");
 
@@ -84,11 +82,9 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("devpodcasts.Domain.Entities.BasePodcast", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -116,11 +112,9 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("devpodcasts.Domain.Entities.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -135,11 +129,9 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("devpodcasts.Domain.Entities.Episode", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AudioDuration")
                         .HasMaxLength(10)
@@ -165,8 +157,8 @@ namespace devpodcasts.Data.EntityFramework.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PodcastId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PodcastId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("PublishedDate")
                         .HasColumnType("datetime2");
@@ -188,11 +180,12 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("devpodcasts.Domain.Entities.Podcast", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("ExternalId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Artists")
                         .HasMaxLength(200)
@@ -243,11 +236,9 @@ namespace devpodcasts.Data.EntityFramework.Migrations
 
             modelBuilder.Entity("devpodcasts.Domain.Entities.Tag", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()

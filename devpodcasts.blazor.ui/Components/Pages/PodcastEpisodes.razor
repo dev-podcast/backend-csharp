@@ -1,0 +1,87 @@
+﻿@page "/podcast/{id:guid}"
+@using devpodcasts.blazor.ui.Models
+@using devpodcasts.blazor.ui.Services
+
+@inject PodcastService PodcastService
+
+<PageTitle>Podcast Episodes</PageTitle>
+
+<h1>Episodes for @PodcastTitle</h1>
+
+@if (IsLoading)
+{
+    <p>Loading episodes...</p>
+}
+else if (Episodes?.Any() == true)
+{
+    <div class="episodes-container">
+        @foreach (var episode in Episodes)
+        {
+            <div class="episode-card">
+                <img src="@episode.ImageUrl" alt="@episode.Title" class="episode-thumbnail"/>
+                <h4>@episode.Title</h4>
+                <p>
+                    <strong>Author:</strong> @episode.Author
+                </p>
+                <p>
+                    <strong>Description:</strong> @episode.Description
+                </p>
+                <p>
+                    <strong>Duration:</strong> @episode.AudioDuration
+                </p>
+                <p>
+                    <strong>Published:</strong> @episode.PublishedDate?.ToShortDateString()
+                </p>
+                <p>
+                    <strong>Source Site:</strong> @episode.SourceUrl
+                </p>
+                @if (!string.IsNullOrEmpty(episode.AudioUrl))
+                {
+                    <audio controls>
+                        <source src="@episode.AudioUrl" type="@episode.AudioType"/>
+                        Your browser does not support the audio element.
+                    </audio>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No episodes found for this podcast.</p>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private string PodcastTitle = string.Empty;
+    private List<Episode>? Episodes;
+    private bool IsLoading = true;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEpisodes();
+    }
+
+    private async Task LoadEpisodes()
+    {
+        try
+        {
+            IsLoading = true;
+
+            var episodes = await PodcastService.GetPodcastEpisodesAsync(Id);
+            Episodes = episodes.OrderBy(e => e.PublishedDate).ToList();
+
+            var podcast = await PodcastService.GetPodcastByIdAsync(Id);
+            PodcastTitle = podcast?.Title ?? "Unknown Podcast";
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading episodes: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+}

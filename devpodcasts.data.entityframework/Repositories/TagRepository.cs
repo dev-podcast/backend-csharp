@@ -1,4 +1,5 @@
-﻿using devpodcasts.Domain.Entities;
+﻿using System;
+using devpodcasts.Domain.Entities;
 using devpodcasts.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -7,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    internal class TagRepository : Repository<Tag>, ITagRepository
+    public class TagRepository : Repository<Tag>, ITagRepository
     {
-        internal TagRepository(ApplicationDbContext context) : base(context)
+        public TagRepository(ApplicationDbContext context) : base(context)
         {
         }
 
-        public ICollection<Podcast> GetByTagId(int tagId)
+        public ICollection<Podcast> GetByTagId(Guid tagId)
         {
             return _context.Tag.Where(x => x.Id == tagId).Select(p => p.Podcasts).SingleOrDefault();          
         }
 
-        public Task<ICollection<Podcast>> GetByTagIdAsync(int tagId)
+        public Task<ICollection<Podcast>> GetByTagIdAsync(Guid tagId)
         {
             return _context.Tag.Where(x => x.Id == tagId).Select(p => p.Podcasts).SingleOrDefaultAsync();
         }

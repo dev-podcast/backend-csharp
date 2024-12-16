@@ -1,0 +1,64 @@
+﻿@page "/"
+@using devpodcasts.blazor.ui.Models
+@using devpodcasts.blazor.ui.Services
+@inject PodcastService PodcastService
+
+<PageTitle>Podcasts</PageTitle>
+
+<h3>Podcasts</h3>
+
+@if (IsLoading)
+{
+    <p>Loading podcasts...</p>
+}
+else if (DisplayPodcasts?.Any() == true)
+{
+    <div class="podcasts-container">
+        @foreach (var row in Rows)
+        {
+            <div class="row">
+                @foreach (var podcast in row)
+                {
+                    <NavLink class="podcast-card" href="@($"/podcast/{podcast.Id}")">
+                        <img src="@podcast.ImageUrl" alt="@podcast.Title" class="podcast-thumbnail" />
+                        <h3>@podcast.Title</h3>
+                        <p>@podcast.Description</p>
+                    </NavLink>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No podcasts found.</p>
+}
+
+@code {
+    private List<Podcast>? DisplayPodcasts;
+    private List<List<Podcast>> Rows = new();
+    private bool IsLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPodcasts();
+    }
+
+    private async Task LoadPodcasts()
+    {
+        try
+        {
+            IsLoading = true;
+            DisplayPodcasts = await PodcastService.GetPodcastsAsync();
+            Rows = DisplayPodcasts.Chunk(5).Select(chunk => chunk.ToList()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading podcasts: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

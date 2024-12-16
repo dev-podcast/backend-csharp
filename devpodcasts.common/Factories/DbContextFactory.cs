@@ -16,9 +16,10 @@ namespace devpodcasts.common.Factories
 
         public ApplicationDbContext CreateDbContext()
         {
-            var connString = _configuration.GetSection("ConnectionStrings").GetSection("PodcastDb").Value;
-            return new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlServer(connString).Options);
+           
+                var connString = _configuration.GetSection("ConnectionStrings").GetSection("PodcastDb").Value;
+                return new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+                    .UseSqlServer(connString).Options);
         }
     }
 }

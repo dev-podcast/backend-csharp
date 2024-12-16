@@ -15,51 +15,65 @@ namespace devpodcasts.common.Services
 
     public class ItunesHttpClient : IItunesHttpClient
     {
-        private const string BASE_LOOKUP_URL = "https://itunes.apple.com/lookup/";
-
+      
         private readonly ILogger<ItunesHttpClient> _logger;
         private readonly IHttpClientFactory _clientFactory;
-        private HttpClient _client;
         public ItunesHttpClient(ILogger<ItunesHttpClient> logger, IHttpClientFactory clientFactory)
         {
-            _clientFactory = clientFactory;
             _logger = logger;
-
-            _client = _clientFactory.CreateClient();
+            _clientFactory = clientFactory;
         }
 
         public async Task<JArray> QueryItunesId(string itunesId)
         {
+
+            var client = _clientFactory.CreateClient();
             var maxTries = 3;
             var remainingTries = maxTries;
             do
             {
+              //  Thread.Sleep(5000);
                 --remainingTries;
                 try
                 {
-                    Thread.Sleep(2000);
-                    var url = BASE_LOOKUP_URL + itunesId;
+                    itunesId = string.Join(string.Empty, itunesId.Skip(2));
+                    var lookupUrl = $"https://itunes.apple.com/lookup?id={itunesId}";
 
-                    var response = await _client.GetAsync(url).ConfigureAwait(false);
+                    Console.WriteLine(lookupUrl);
+                  
+                    var response = await client.GetAsync(lookupUrl);
 
                     if (!response.IsSuccessStatusCode) return new JArray();
 
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        using (var stream = response.Content.ReadAsStream())
+                        var data = await response.Content.ReadAsStringAsync();
+                        var json = JObject.Parse(data);
+                        if (json != null)
                         {
-                            using (var raw = new StreamReader(stream, Encoding.UTF8))
+                            var resultCount = json["resultCount"];
+
+                            if (resultCount != null)
                             {
-                                var json = JObject.Parse(raw.ReadToEnd());
-                                if (json != null)
+                                if (resultCount.ToString() != "0")
                                 {
-                                    var resultCount = json["resultCount"].ToString();
-                                    if (resultCount != "0") return JArray.Parse(json["results"].ToString());
+                                    var results = json["results"];
+                                    if (results != null)
+                                    {
+                                        return JArray.Parse(results.ToString());
+                                    }
+                                } else
+                                {
+                                    return new JArray();
                                 }
                             }
                         }
                     }
-                    return new JArray();
+                    if (remainingTries == 0)
+                    {
+                        return new JArray();
+                    }
+                    
                 }
                 catch (Exception e)
                 {
@@ -72,6 +86,7 @@ namespace devpodcasts.common.Services
 
         public async Task<IReadOnlyCollection<XElement>> QueryFeedUrl(string url)
         {
+            var client = _clientFactory.CreateClient();
             var maxTries = 3;
             var remainingTries = maxTries;
             do
@@ -81,7 +96,7 @@ namespace devpodcasts.common.Services
                 {
                     Thread.Sleep(2000);
 
-                    var response = await _client.GetAsync(url).ConfigureAwait(false);
+                    var response = await client.GetAsync(url).ConfigureAwait(false);
 
                     if (!response.IsSuccessStatusCode) return new List<XElement>();
 

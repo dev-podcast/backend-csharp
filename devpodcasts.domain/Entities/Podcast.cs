@@ -16,7 +16,8 @@ namespace devpodcasts.Domain.Entities
         }
 
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public int ExternalId { get; set; }
         [Required]
         [MaxLength(100)]
         public string Title { get; set; }
@@ -34,7 +35,7 @@ namespace devpodcasts.Domain.Entities
         [Column(TypeName ="DateTime")]
         public DateTime CreatedDate { get; set; }
         public string Artists { get; set; } = string.Empty;
-        [Required]
+     //   [Required]
         [MaxLength(50)]
         public string ItunesId { get; set; }
         public ICollection<Episode> Episodes { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using devpodcasts.Domain;
-using devpodcasts.Domain.Entities;
+using devpodcasts.Domain.Entities.Dtos;
 using devpodcasts.Domain.Interfaces;
 
 namespace devpodcasts.Data.EntityFramework.Repositories

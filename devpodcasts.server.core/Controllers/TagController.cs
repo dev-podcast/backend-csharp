@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/tags/{tagId}")]
-        public async Task<IActionResult> Get(int tagId)
+        public async Task<IActionResult> Get(Guid tagId)
         {
             var tag = await _unitOfWork.TagRepository.GetAsync(t => t.Id == tagId);
             var model = _mapper.Map<Tag, TagViewModel>(tag);

@@ -7,7 +7,7 @@ namespace devpodcasts.common.JsonObjects
     {
         public  static BasePodcast CreateBasePodcast(this BasePodcastJsonObject basePodcastJsonObject)
         {
-            return new BasePodcast()
+            return new BasePodcast
             {
                 Title = basePodcastJsonObject.Title.RemovePodcastFromName(),
                 Description = basePodcastJsonObject.Description,

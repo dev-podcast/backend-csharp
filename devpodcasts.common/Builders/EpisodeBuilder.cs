@@ -12,18 +12,24 @@ namespace devpodcasts.common.Builders
 {
     public class EpisodeBuilder
     {
-        private string _title;
-        private int _podcastId;
-        private string _author;
-        private string _audioUrl;
-        private string _audioType;
-        private string _audioDuration;
+        private Guid _id;
+        private string? _title;
+        private Guid _podcastId;
+        private string? _author;
+        private string? _audioUrl;
+        private string? _audioType;
+        private string? _audioDuration;
         private DateTime? _publishedDate;
-        private string _description;
-        private string _imageUrl;
-        private string _sourceUrl;
+        private string? _description;
+        private string? _imageUrl;
+        private string? _sourceUrl;
 
-        public EpisodeBuilder AddTitle(string title)
+        public EpisodeBuilder WithId(Guid id)
+        {
+            _id = Guid.NewGuid();
+            return this;
+        }
+        public EpisodeBuilder AddTitle(string? title)
         {
             if (title == null) return this;
             if (title.Length > 250)
@@ -34,13 +40,13 @@ namespace devpodcasts.common.Builders
             return this;
         }
 
-        public EpisodeBuilder AddImageUrl(string imageUrl)
+        public EpisodeBuilder AddImageUrl(string? imageUrl)
         {
             _imageUrl = imageUrl;
             return this;
         }
 
-        public EpisodeBuilder AddAudioTypeAndAudioUrl(XElement enclosure)
+        public EpisodeBuilder AddAudioTypeAndAudioUrl(XElement? enclosure)
         {
             if (enclosure == null) return this;
             if (enclosure.HasAttributes)
@@ -49,29 +55,35 @@ namespace devpodcasts.common.Builders
                 var audioType = audioStreamObject.FirstOrDefault(x => x.Name == EpisodeConstants.TypeElementName);
                 var audioUrl = audioStreamObject.FirstOrDefault(x => x.Name == EpisodeConstants.UrlElementName);
 
-                _audioType = audioType?.Value;
+                if(audioType!= null)
+                {
+                    _audioType = audioType.Value;
+                    if (_audioType != null && _audioType.Length > 10)
+                        _audioType = _audioType.Substring(0, 10);
+                }
 
-                if (_audioType != null && _audioType.Length > 10)
-                    _audioType = _audioType.Substring(0, 10);
-
-                _audioUrl = audioUrl?.Value;
+                if(audioUrl != null)
+                {
+                    _audioUrl = audioUrl.Value;
+                }
+               
             }
             return this;
         }
 
-        public EpisodeBuilder AddSourceUrl(XElement link)
+        public EpisodeBuilder AddSourceUrl(XElement? link)
         {
             if (link != null) _sourceUrl = link.Value;
             return this;
         }
 
-        public EpisodeBuilder AddPublishedDate(XElement publishedDate)
+        public EpisodeBuilder AddPublishedDate(XElement? publishedDate)
         {
             if (DateTime.TryParse(publishedDate?.Value, out var newDate)) _publishedDate = newDate;
             return this;
         }
 
-        public EpisodeBuilder AddAuthor(XElement itunesAuthor, XElement author)
+        public EpisodeBuilder AddAuthor(XElement? itunesAuthor, XElement? author)
         {
             if (itunesAuthor != null)
                 _author = itunesAuthor.Value;
@@ -82,7 +94,7 @@ namespace devpodcasts.common.Builders
             return this;
         }
 
-        public EpisodeBuilder AddDescription(XElement description, XElement itunesSummary, XElement summary)
+        public EpisodeBuilder AddDescription(XElement? description, XElement? itunesSummary, XElement? summary)
         {
 
             if (description != null)
@@ -97,7 +109,7 @@ namespace devpodcasts.common.Builders
             return this;
         }
 
-        public EpisodeBuilder AddAudioDuration(XElement itunesDuration, XElement duration)
+        public EpisodeBuilder AddAudioDuration(XElement? itunesDuration, XElement? duration)
         {
             if (itunesDuration != null)
                 _audioDuration = itunesDuration.Value;
@@ -109,7 +121,7 @@ namespace devpodcasts.common.Builders
             return this;
         }
 
-        public EpisodeBuilder AddPodcast(Podcast podcast)
+        public EpisodeBuilder AddPodcast(Podcast? podcast)
         {
             if (podcast == null) return this;
             _podcastId = podcast.Id;
@@ -120,6 +132,7 @@ namespace devpodcasts.common.Builders
         {
             return new Episode()
             {
+                Id = _id,
                 Title = _title,
                 ImageUrl = _imageUrl,
                 SourceUrl = _sourceUrl,

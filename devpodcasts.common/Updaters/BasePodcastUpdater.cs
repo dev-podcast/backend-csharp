@@ -6,57 +6,123 @@ using Newtonsoft.Json;
 using System.Collections.Immutable;
 using devpodcasts.common.JsonObjects;
 using devpodcasts.common.Extensions;
+using devpodcasts.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace devpodcasts.common.Updaters;
 
 public class BasePodcastUpdater : IBasePodcastUpdater
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly ILogger<BasePodcastUpdater> _logger;
-
-    public BasePodcastUpdater(ILogger<BasePodcastUpdater> logger, IDbContextFactory dbContextFactory)
+    private readonly IUnitOfWork _unitOfWork;
+    public BasePodcastUpdater(ILogger<BasePodcastUpdater> logger, IDbContextFactory<ApplicationDbContext> dbContextFactory, IUnitOfWork unitOfWork)
     {
         _logger = logger;
-        _context = dbContextFactory.CreateDbContext();
+        _contextFactory = dbContextFactory;
+        _unitOfWork = unitOfWork;
     }
 
-    private ICollection<BasePodcast> _basePodcasts { get;} = new List<BasePodcast>();
+    private ICollection<BasePodcast> _basePodcasts { get; } = new List<BasePodcast>();
     private ICollection<Tag> _tags { get; } = new List<Tag>();
-
-    public Task UpdateDataAsync()
+    
+    
+    public async Task UpdateDataAsync()
     {
-        return Task.Run(() =>
+        var basePodcasts = GetBasePodcastsFromJson();
+
+        if (basePodcasts == null)
         {
-                var basePodcasts = GetBasePodcastsFromJson();
+            return;
+        }
 
-                var properties = basePodcasts.GetType().GetProperties();
-                foreach (var prop in properties)
-                {
-                    var existingBasePodcasts = _context.BasePodcast.ToImmutableList();
-                    var podcastList = (IEnumerable<BasePodcastJsonObject>)prop.GetValue(basePodcasts);
-                    var propertyName = prop.Name;
+        var existingBasePodcasts = await GetExistingBasePodcastsAsync();
+        foreach (var prop in basePodcasts.GetType().GetProperties())
+        {
+            var basePodcastList = prop.GetValue(basePodcasts);
 
-                    _logger.LogInformation("BasePodcast Category: " + propertyName);
+            if (basePodcastList != null)
+            {
+                var jsonObjectList = (IEnumerable<BasePodcastJsonObject>)basePodcastList;
+                var propertyName = prop.Name;
 
-                    var basePodcastJsonObjects = FindNonExisting(podcastList, existingBasePodcasts).ToList();
-                    if (!basePodcastJsonObjects.Any()) continue;
-                    _basePodcasts.AddRange(basePodcastJsonObjects.Select(d => d.CreateBasePodcast()));
-                   
-                }
+                _logger.LogInformation("BasePodcast Category: " + propertyName);
 
-                Save().Wait();
+                var basePodcastJsonObjects = FindNonExisting(jsonObjectList, existingBasePodcasts).ToList();
+                if (!basePodcastJsonObjects.Any()) continue;
 
-                _logger.LogInformation("Updating base podcasts is complete...");
-        });
+                var basePodcastsToAdd = basePodcastJsonObjects.Select(d => d.CreateBasePodcast()).ToList();
+                await AddBasePodcastsAsync(basePodcastsToAdd);
+            }
+        }
+
+        _logger.LogInformation("Updating base podcasts is complete...");
     }
 
-    private RootJsonObject GetBasePodcastsFromJson()
+    // public async Task UpdateDataAsync()
+    // {
+    //
+    //     var basePodcasts = GetBasePodcastsFromJson();
+    //
+    //     if(basePodcasts == null) 
+    //     {
+    //         return; 
+    //     }
+    //
+    //     var properties = basePodcasts.GetType().GetProperties();
+    //     foreach (var prop in properties)
+    //     {
+    //         var basePodcastList = prop.GetValue(basePodcasts);
+    //            
+    //         if (basePodcastList != null)
+    //         {
+    //             var existingBasePodcasts = _context.BasePodcast.ToImmutableList();
+    //             var jsonObjectList = (IEnumerable<BasePodcastJsonObject>)basePodcastList;
+    //             var propertyName = prop.Name;
+    //
+    //             _logger.LogInformation("BasePodcast Category: " + propertyName);
+    //
+    //             var basePodcastJsonObjects = FindNonExisting(jsonObjectList, existingBasePodcasts).ToList();
+    //             if (!basePodcastJsonObjects.Any()) continue;
+    //             _basePodcasts.AddRange(basePodcastJsonObjects.Select(d => d.CreateBasePodcast()));
+    //         }       
+    //     }
+    //
+    //     Save().Wait();
+    //
+    //     _logger.LogInformation("Updating base podcasts is complete...");
+    //
+    // }
+    
+    private async Task AddBasePodcastsAsync(IEnumerable<BasePodcast> basePodcasts)
     {
-        var podListPath = Environment.CurrentDirectory;
-        podListPath = Path.Combine(podListPath, @"PodList/podlist.json");
+        // using var context = _contextFactory.CreateDbContext();
+        // await context.BasePodcast.AddRangeAsync(basePodcasts);
+        // await context.SaveChangesAsync();
+        await _unitOfWork.BasePodcastRepository.AddRangeAsync(basePodcasts);
+        await _unitOfWork.BasePodcastRepository.SaveAsync();
+    }
+    
+    private async Task<List<BasePodcast>> GetExistingBasePodcastsAsync()
+    {
+      //  using var context = _contextFactory.CreateDbContext();
+      var repo = _unitOfWork.Repository<BasePodcast>();
+
+
+        return await repo.GetAllAsync();
+        //return await context.BasePodcast.ToListAsync();
+    }
+
+    private RootJsonObject? GetBasePodcastsFromJson()
+    {
+        var podListPath = Path.Combine(Environment.CurrentDirectory, @"PodList/podlist.json");
         var file = File.ReadAllText(podListPath);
         var basePodcasts = JsonConvert.DeserializeObject<RootJsonObject>(file);
-        return basePodcasts;
+
+        if (basePodcasts != null) return basePodcasts;
+        _logger.LogError("Could not parse base podcast list from json");
+        throw new Exception("Could not parse base podcast list from json");
+
     }
 
     private IEnumerable<BasePodcastJsonObject> FindNonExisting(IEnumerable<BasePodcastJsonObject> newPods,
@@ -69,25 +135,11 @@ public class BasePodcastUpdater : IBasePodcastUpdater
             .Select(x => x.Title.RemovePodcastFromName())
             .Except(existingPodcasts.Select(x => x.Title)).ToList();
         var diff = (from n in newPodcasts
-            join nt in newTitles on n.Title equals nt
-            select n).ToList();
+                    join nt in newTitles on n.Title equals nt
+                    select n).ToList();
         return diff;
     }
-
-    private async Task Save()
-    {
-        if (_basePodcasts.Any())
-        {
-            await _context.BasePodcast.AddRangeAsync(_basePodcasts).ConfigureAwait(false);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
-        }
-        _context.Dispose();
-    }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
+    
 }
 
 

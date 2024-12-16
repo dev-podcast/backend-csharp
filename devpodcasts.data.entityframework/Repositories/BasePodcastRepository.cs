@@ -1,19 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using devpodcasts.Domain.Entities;
 using devpodcasts.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    internal class BasePodcastRepository : Repository<BasePodcast>, IBasePodcastRepository
+    public class BasePodcastRepository : Repository<BasePodcast>, IBasePodcastRepository
     {
-        internal BasePodcastRepository(ApplicationDbContext context) : base(context)
+        public BasePodcastRepository(ApplicationDbContext context) : base(context)
         {
         }
 
         public ICollection<string> GetAllItunesIds()
         {
-            return Set.Select(x => x.ItunesId).ToList();
+            return _context.Set<BasePodcast>().Select(x => x.ItunesId).ToList();
+        }
+
+        public Task<List<string>> GetAllItunesIdsAsync()
+        {
+            return _context.Set<BasePodcast>().Select(x => x.ItunesId).ToListAsync();
         }
     }
 }

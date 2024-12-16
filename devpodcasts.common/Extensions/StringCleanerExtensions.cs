@@ -42,5 +42,11 @@ namespace devpodcasts.common.Extensions
                 .RemoveTitleFromName()
                 .Trim();
         }
+        
+        public static string TrimToMaxLength(this string input, int maxLength = 50)
+        {
+            if (string.IsNullOrEmpty(input)) return input; // Handle null or empty strings
+            return input.Length <= maxLength ? input : input.Substring(0, maxLength);
+        }
     }
 }

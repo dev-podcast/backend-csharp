@@ -3,9 +3,9 @@ using devpodcasts.Domain.Interfaces;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    internal class CategoryRepository : Repository<Category>, ICategoryRepository
+    public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        internal CategoryRepository(ApplicationDbContext context) : base(context)
+        public CategoryRepository(ApplicationDbContext context) : base(context)
         {
         }
     }

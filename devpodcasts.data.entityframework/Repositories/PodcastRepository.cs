@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    internal class PodcastRepository : Repository<Podcast>, IPodcastRepository
+    public class PodcastRepository : Repository<Podcast>, IPodcastRepository
     {
-        internal PodcastRepository(ApplicationDbContext context) : base(context)
+        public PodcastRepository(ApplicationDbContext context) : base(context)
         {
         }
 
@@ -20,9 +20,9 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             return SingleQuery(predicate).SingleOrDefault();
         }
 
-        public Task<List<Podcast>> GetAllAsync(int id)
+        public Task<List<Podcast>> GetAllAsync(Guid id)
         {
-            return Set.Where(p => p.Id == id)
+            return _context.Set<Podcast>().Where(p => p.Id == id)
                 .Include(p => p.Tags)
                 .Include(p => p.Categories).ToListAsync(); ;   
         }
@@ -45,12 +45,12 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public Task<List<Podcast>> GetAllBySearch(Expression<Func<Podcast, bool>> predicate)
         {
-            return Set.Where(predicate).ToListAsync();
+            return _context.Set<Podcast>().Where(predicate).ToListAsync();
         }
 
         private IQueryable<Podcast> RecentQuery(int podcastLimit = 15, int episodeLimit = 15)
         {    
-            return Set.Select(x => new Podcast
+            return _context.Set<Podcast>().Select(x => new Podcast
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -67,12 +67,9 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             }).OrderByDescending(x => x.LatestReleaseDate).Take(podcastLimit);
         }
 
-
- 
-
         private IQueryable<Podcast> SingleQuery(Expression<Func<Podcast, bool>> predicate)
         {
-            return Set.Where(predicate)
+            return _context.Set<Podcast>().Where(predicate)
                 .Include(p => p.Tags)
                 .Include(p => p.Categories)
                 .Include(p => p.Episodes);

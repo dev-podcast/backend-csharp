@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using devpodcasts.Domain;
@@ -23,7 +24,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var podcast = await _unitOfWork.PodcastRepository.GetAsync(x => x.Id == id);
             var model = _mapper.Map<Podcast, PodcastViewModel>(podcast);
@@ -69,7 +70,7 @@ namespace devpodcasts.Server.Core.Controllers
 
         [HttpGet]
         [Route("v1/podcast/tag/{id}")]
-        public async Task<IActionResult> Tag(int Id)
+        public async Task<IActionResult> Tag(Guid Id)
         {
             var tags = await _unitOfWork.TagRepository.GetAsync(x => x.Id == Id);
             var model = _mapper.Map<ICollection<Podcast>, List<PodcastViewModel>>(tags.Podcasts);
