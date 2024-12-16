@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Reflection;
 using devpodcasts.Data.EntityFramework;
 using devpodcasts.Data.EntityFramework.Repositories;
-using devpodcasts.data.mock;
 using devpodcasts.Domain.Interfaces;
 using devpodcasts.server.api;
 using devpodcasts.server.api.Extensions;
@@ -31,7 +30,6 @@ var _configuration = new ConfigurationBuilder()
 
 var connString = _configuration.GetSection("ConnectionStrings:PodcastDb").Value;
 
-builder.Services.AddSingleton<IPodcastGenerator, PodcastGenerator>();
 builder.Services.AddScoped<IPodcastRepository, PodcastRepository>();
 builder.Services.AddScoped<IEpisodeRepository, EpisodeRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();

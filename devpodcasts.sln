@@ -11,13 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.services.core",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.server.core", "devpodcasts.server.core\devpodcasts.server.core.csproj", "{908C3A8F-D623-4547-A6F3-431F5E804936}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.services.core.test", "devpodcasts.services.core.test\devpodcasts.services.core.test.csproj", "{82621BC1-1729-4FA3-9341-BB99B42C4E6F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.server.core.test", "devpodcasts.server.core.test\devpodcasts.server.core.test.csproj", "{EB023767-57DA-4228-818A-4A3ED60E6556}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devpodcasts.common", "devpodcasts.common\devpodcasts.common.csproj", "{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devpodcasts.data.mock", "devpodcasts.data.mock\devpodcasts.data.mock.csproj", "{488F9ECF-2921-495B-A25A-85D55C8E9DED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devpodcasts.server.api", "devpodcasts.server.api\devpodcasts.server.api.csproj", "{9B0F0013-29F6-4C84-A2AB-B385CC71B304}"
 EndProject
@@ -45,10 +41,6 @@ Global
 		{908C3A8F-D623-4547-A6F3-431F5E804936}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{908C3A8F-D623-4547-A6F3-431F5E804936}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{908C3A8F-D623-4547-A6F3-431F5E804936}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82621BC1-1729-4FA3-9341-BB99B42C4E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82621BC1-1729-4FA3-9341-BB99B42C4E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82621BC1-1729-4FA3-9341-BB99B42C4E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82621BC1-1729-4FA3-9341-BB99B42C4E6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB023767-57DA-4228-818A-4A3ED60E6556}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,10 +49,6 @@ Global
 		{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6C54AD8-B666-4E1D-A7FE-6296DC65D218}.Release|Any CPU.Build.0 = Release|Any CPU
-		{488F9ECF-2921-495B-A25A-85D55C8E9DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{488F9ECF-2921-495B-A25A-85D55C8E9DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{488F9ECF-2921-495B-A25A-85D55C8E9DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{488F9ECF-2921-495B-A25A-85D55C8E9DED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9B0F0013-29F6-4C84-A2AB-B385CC71B304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9B0F0013-29F6-4C84-A2AB-B385CC71B304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B0F0013-29F6-4C84-A2AB-B385CC71B304}.Release|Any CPU.ActiveCfg = Release|Any CPU

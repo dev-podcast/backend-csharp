@@ -1,8 +1,5 @@
-﻿using devpodcasts.data.mock;
-using devpodcasts.Domain.Entities;
-using devpodcasts.Domain.Interfaces;
+﻿using devpodcasts.Domain.Interfaces;
 using devpodcasts.server.api.Extensions;
-using devpodcasts.server.api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace devpodcasts.server.api;

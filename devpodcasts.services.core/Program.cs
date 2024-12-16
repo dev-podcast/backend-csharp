@@ -12,7 +12,6 @@ using devpodcasts.common.Updaters;
 using Microsoft.EntityFrameworkCore;
 using devpodcasts.Domain.Interfaces;
 using devpodcasts.Data.EntityFramework.Repositories;
-using devpodcasts.data.mock;
 using devpodcasts.Services.Core.Extensions;
 using devpodcasts.Services.Core.Services;
 
@@ -74,8 +73,7 @@ namespace devpodcasts.Services.Core
 
             if (useMockDb == "true")
             {
-                services.AddSingleton<IDbContext, MockDbContext>();
-                services.AddDbContextFactory<MockDbContext>();
+               //TODO: Remove later
             }
             else
             {
