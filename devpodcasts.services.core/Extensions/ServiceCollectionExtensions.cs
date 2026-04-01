@@ -37,9 +37,11 @@ public static class ServiceCollectionExtensions
             client.BaseAddress = new Uri("https://itunes.apple.com/lookup/");
         });
 
+        services.AddScoped<IDatabaseService, DatabaseService>();
         services.AddSingleton<IDbContextFactory, DbContextFactory>();
         services.AddSingleton<IItunesPodcastUpdater, ItunesPodcastUpdater>();
         services.AddTransient<IITunesEpisodeUpdater, ItunesEpisodeUpdater>();
+        services.AddScoped<IBasePodcastUpdater, BasePodcastUpdater>();
         services.AddSingleton<ICategoryRepository, CategoryRepository>();
         services.AddSingleton<IBasePodcastRepository, BasePodcastRepository>();
         services.AddSingleton<IPodcastRepository, PodcastRepository>();

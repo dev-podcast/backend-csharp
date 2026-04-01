@@ -1,4 +1,5 @@
-﻿using devpodcasts.Domain.Interfaces;
+﻿using devpodcasts.Domain;
+using devpodcasts.Domain.Interfaces;
 using devpodcasts.server.api.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,11 @@ public static class PodcastExtensions
     /// <param name="app">The WebApplication instance to which the podcast endpoints will be added.</param>
     public static void PodcastEndpoints(this WebApplication app)
     {
-        /// <summary>
-        /// Retrieves all podcasts.
-        /// </summary>
-        /// <returns>A list of podcasts.</returns>
-        app.MapGet("/v1/podcasts", async ([FromServices] IPodcastRepository podcastRepository, string? title, DateTime? fromDate) =>
+        var group = app.MapGroup("/v1").WithTags("Podcasts");
+
+        group.MapGet("/podcasts", async ([FromServices] IUnitOfWork unitOfWork, string? title, DateTime? fromDate) =>
             {
-                var podcasts = await podcastRepository.GetAllAsync();
+                var podcasts = await unitOfWork.PodcastRepository.GetAllAsync();
 
                 if (title != null)
                 {
@@ -30,67 +29,106 @@ public static class PodcastExtensions
                     podcasts = podcasts.Where(p => p.LatestReleaseDate >= fromDate).ToList();
                 }
 
-
-                return Results.Ok(podcasts.ToPodcastDtos().ToList());
+                return Results.Ok(podcasts.ToPodcastDtos());
             })
             .WithName("GetPodcasts")
-            .WithTags("Podcasts")
-            .WithOpenApi();
-        
-      
-        app.MapGet("v1/podcast/{id}", async ([FromServices] IPodcastRepository podcastRepository, Guid id) =>
-        {
-            var podcast = await podcastRepository.GetAsync(p => p.Id == id);
-            
-            return podcast != null ? Results.Ok(podcast.ToPodcastDto()) : Results.NotFound();
-        }).WithName("GetPodcast").WithTags("Podcasts").WithOpenApi();
-        
-        
-        app.MapGet("v1/podcasts/recent", async ([FromServices] IPodcastRepository podcastRepository) =>
-        {
-            var recentPodcasts = await podcastRepository.GetRecentAsync(50, 50);
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Retrieves all podcasts.";
+                operation.Description = "Returns a list of podcasts, optionally filtered by title and release date.";
+                return operation;
+            });
 
-            return Results.Ok(recentPodcasts.ToPodcastDtos().ToList());
-        }).WithName("GetRecentPodcasts").WithTags("Podcasts").WithOpenApi();
-        
-        app.MapGet("v1/podcasts/search",
-                async ([FromServices] IPodcastRepository podcastRepository, string? searchTerm) =>
+        group.MapGet("/podcast/{id}", async ([FromServices] IUnitOfWork unitOfWork, Guid id) =>
+        {
+            var podcast = await unitOfWork.PodcastRepository.GetAsync(p => p.Id == id);
+
+            return podcast != null ? Results.Ok(podcast.ToPodcastDto()) : Results.NotFound();
+        }).WithName("GetPodcast").WithOpenApi(operation =>
+        {
+            operation.Summary = "Retrieves a specific podcast by ID.";
+            return operation;
+        });
+
+        group.MapGet("/podcasts/recent", async ([FromServices] IUnitOfWork unitOfWork, int? podcastLimit, int? episodeLimit) =>
+        {
+            var pLimit = podcastLimit ?? 15;
+            var eLimit = episodeLimit ?? 15;
+            var recentPodcasts = await unitOfWork.PodcastRepository.GetRecentAsync(pLimit, eLimit);
+
+            return Results.Ok(recentPodcasts.ToPodcastDtos());
+        }).WithName("GetRecentPodcasts").WithOpenApi(operation =>
+        {
+            operation.Summary = "Retrieves recent podcasts.";
+            operation.Description = "Returns a list of recent podcasts with optional limits for podcasts and episodes.";
+            return operation;
+        });
+
+        group.MapGet("/podcast/tag/{id}", async ([FromServices] IUnitOfWork unitOfWork, Guid id) =>
+        {
+            var tag = await unitOfWork.TagRepository.GetAsync(x => x.Id == id);
+            if (tag == null) return Results.NotFound();
+            
+            var podcasts = tag.Podcasts.ToList();
+            return Results.Ok(podcasts.ToPodcastDtos());
+        }).WithName("GetPodcastsByTag").WithOpenApi(operation =>
+        {
+            operation.Summary = "Retrieves podcasts associated with a specific tag.";
+            return operation;
+        });
+
+        group.MapGet("/podcasts/search",
+                async ([FromServices] IUnitOfWork unitOfWork, string? searchTerm) =>
                 {
                     if (searchTerm != null)
                     {
-                        var podcasts = await podcastRepository.GetAllBySearch(p =>
+                        var podcasts = await unitOfWork.PodcastRepository.GetAllBySearch(p =>
                             p.Title.Contains(searchTerm) || p.Description.Contains(searchTerm));
 
                         return Results.Ok(podcasts.ToPodcastDtos());
                     }
 
-                    var defaultPodcasts = await podcastRepository.GetAllAsync();
+                    var defaultPodcasts = await unitOfWork.PodcastRepository.GetAllAsync();
                     return Results.Ok(defaultPodcasts.ToPodcastDtos());
                 })
             .WithName("SearchPodcasts")
-            .WithTags("Podcasts")
-            .WithOpenApi();
-        
-        app.MapGet("v1/podcasts/{id}/episodes",
-                async ([FromServices] IPodcastRepository podcastRepository, [FromServices] IEpisodeRepository episodeRepository,  Guid id) =>
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Searches for podcasts.";
+                operation.Description = "Returns podcasts that match the search term in their title or description.";
+                return operation;
+            });
+
+        group.MapGet("/podcasts/{id}/episodes",
+                async ([FromServices] IUnitOfWork unitOfWork, Guid id) =>
                 {
-                    var podcast = await podcastRepository.GetAsync(p => p.Id == id);
-                    var episodes = await episodeRepository.GetAllAsync(e => e.PodcastId == podcast.Id);
+                    var podcast = await unitOfWork.PodcastRepository.GetAsync(p => p.Id == id);
+                    if (podcast == null) return Results.NotFound();
                     
-                    return Results.Ok(episodes.ToEpisodeDtos().ToList());
+                    var episodes = await unitOfWork.EpisodeRepository.GetAllAsync(e => e.PodcastId == podcast.Id);
+
+                    return Results.Ok(episodes.ToEpisodeDtos());
                 })
             .WithName("GetPodcastEpisodes")
-            .WithTags("Podcasts")
-            .WithOpenApi();
-        
-        app.MapGet("v1/podcasts/{id}/categories",
-                async ([FromServices] IPodcastRepository podcastRepository, [FromServices] ICategoryRepository categoryRepository, Guid id) =>
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Retrieves all episodes for a specific podcast.";
+                return operation;
+            });
+
+        group.MapGet("/podcasts/{id}/categories",
+                async ([FromServices] IUnitOfWork unitOfWork, Guid id) =>
                 {
-                    var podcast = await podcastRepository.GetAsync(p => p.Id == id);
+                    var podcast = await unitOfWork.PodcastRepository.GetAsync(p => p.Id == id);
+                    if (podcast == null) return Results.NotFound();
+                    
                     return Results.Ok(podcast.Categories.ToCategoryDtos());
                 })
             .WithName("GetPodcastCategories")
-            .WithTags("Podcasts")
-            .WithOpenApi();
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Retrieves categories for a specific podcast.";
+                return operation;
+            });
     }
 }

@@ -1,0 +1,30 @@
+.episode-thumbnail {
+  display: inline-block;
+  width: 200px;
+  height: 300px;
+  background-color: black;
+  margin-left: 20px;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.artwork img {
+  width: 200px;
+}
+
+.episode-details {
+  height: 100px;
+  width: 200px;
+  color: white;
+  font-size: 14px;
+}
+
+.episode-title {
+  margin-top: 10px;
+  height: 30px;
+}
+
+.episode-airdate {
+  margin-top: 10px;
+  height: 10px;
+}

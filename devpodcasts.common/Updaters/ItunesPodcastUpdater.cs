@@ -40,48 +40,98 @@ public class ItunesPodcastUpdater : IItunesPodcastUpdater
 
     public async Task UpdateDataAsync()
     {
-        var listOfItunesIds = await _basePodcastRepository.GetAllItunesIdsAsync(); 
-        var existingPodcasts = await _podcastRepository.GetAllAsync();    // _context.Podcast.Select(x => x.ItunesId).ToList();
-        var existingItunesIds = existingPodcasts.Select(x => x.ItunesId);
-        var podcastToCreate = listOfItunesIds.Except(existingItunesIds).ToList(); //existingItunesIds.Except(listOfItunesIds).ToList();
+        var listOfItunesIds = await _basePodcastRepository.GetAllItunesIdsAsync();
+        var existingPodcasts = await _podcastRepository.GetAllAsync();
+        var existingItunesIds = existingPodcasts.Select(x => x.ItunesId).ToList();
 
+        // 1. Create new podcasts
+        var podcastToCreate = listOfItunesIds.Except(existingItunesIds).ToList();
         foreach (var itunesId in podcastToCreate)
         {
-
-            if (itunesId == null)
-            {
-                _logger.LogError("ItunesId was null. Moving to next podcast to create");
-                continue;
-            }
-
-            _logger.LogInformation("Updating id: " + itunesId);
+            if (itunesId == null) continue;
+            _logger.LogInformation("Creating podcast with id: " + itunesId);
             await CreatePodcastData(itunesId).ConfigureAwait(false);
         }
 
-        await _tagRepository.AddRangeAsync(_tags);
-        await _tagRepository.SaveAsync();
-
-
-        await _podcastRepository.AddRangeAsync(_podcasts);
-        await _podcastRepository.SaveAsync();
-
-
-        var podcasts = await _podcastRepository.GetAllAsync(x => _podcasts.Select(p => p.ItunesId).Contains(x.ItunesId));
-
-        foreach (var pod in podcasts)
+        // Save new tags
+        if (_tags.Any())
         {
-            var tagDescriptions =  _podcastTags[pod.Title];
-            var matchingTags = await _tagRepository.GetAllAsync(x => tagDescriptions.Contains(x.Description));
-
-            pod.Tags.AddRange(matchingTags);
-
-            _podcastRepository.Update(pod);
-            await _podcastRepository.SaveAsync();
-
-
+            await _tagRepository.AddRangeAsync(_tags);
+            await _tagRepository.SaveAsync();
         }
 
-        
+        // Save new podcasts
+        if (_podcasts.Any())
+        {
+            await _podcastRepository.AddRangeAsync(_podcasts);
+            await _podcastRepository.SaveAsync();
+        }
+
+        // 2. Update existing podcasts (Sync with Itunes)
+        _logger.LogInformation("Syncing existing podcasts with Itunes...");
+        foreach (var podcast in existingPodcasts)
+        {
+            try
+            {
+                var result = await _itunesHttpClient.QueryItunesId(podcast.ItunesId);
+                if (result == null || !result.HasValues) continue;
+
+                var podcastResult = result[0].ToObject<PodcastResult>();
+                if (podcastResult == null) continue;
+
+                // Update metadata if changed
+                bool updated = false;
+                if (podcast.EpisodeCount != podcastResult.TrackCount)
+                {
+                    podcast.EpisodeCount = podcastResult.TrackCount;
+                    updated = true;
+                }
+                if (podcast.LatestReleaseDate != podcastResult.ReleaseDate)
+                {
+                    podcast.LatestReleaseDate = podcastResult.ReleaseDate;
+                    updated = true;
+                }
+                if (podcast.ImageUrl != podcastResult.ImageUrl600)
+                {
+                    podcast.ImageUrl = podcastResult.ImageUrl600;
+                    updated = true;
+                }
+
+                if (updated)
+                {
+                    _logger.LogInformation("Updating podcast metadata for: {title}", podcast.Title);
+                    _podcastRepository.Update(podcast);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating podcast {title}", podcast.Title);
+            }
+        }
+        await _podcastRepository.SaveAsync();
+
+        // Map tags for newly created podcasts
+        var newPodIds = _podcasts.Select(p => p.ItunesId).ToList();
+        if (newPodIds.Any())
+        {
+            var podcastsWithTags = await _podcastRepository.GetAllAsync(x => newPodIds.Contains(x.ItunesId));
+            foreach (var pod in podcastsWithTags)
+            {
+                if (!_podcastTags.ContainsKey(pod.Title)) continue;
+                var tagDescriptions = _podcastTags[pod.Title];
+                var matchingTags = await _tagRepository.GetAllAsync(x => tagDescriptions.Contains(x.Description));
+
+                foreach (var tag in matchingTags)
+                {
+                    if (!pod.Tags.Any(t => t.Id == tag.Id))
+                    {
+                        pod.Tags.Add(tag);
+                    }
+                }
+                _podcastRepository.Update(pod);
+            }
+            await _podcastRepository.SaveAsync();
+        }
     }
 
     private async Task CreatePodcastData(string itunesId)

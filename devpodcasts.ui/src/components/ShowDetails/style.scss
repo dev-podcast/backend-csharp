@@ -1,0 +1,36 @@
+.show-details {
+  width: 100%;
+  margin-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.show-image-container {
+  display: inline-block;
+
+  img {
+   height: 250px;
+   margin-bottom: 25px;
+  }
+}
+
+.show-about-container {
+  display: inline-block;
+  color: white;
+  width: 450px;
+  text-align: left;
+  margin-top: 0px;
+  margin-left: 25px;
+
+  h1, h2 {
+    margin-top: 0;
+  }
+
+  p {
+    font-size: 18px;
+    margin-top: 0px;
+    line-height: 1.5;
+  }
+
+}

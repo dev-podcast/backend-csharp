@@ -1,0 +1,55 @@
+@use '../../styles/variables' as *;
+
+.episode-list {
+  display: block;
+  width: 80%;
+  margin-left: 10%;
+  margin-right: 10%;
+  text-align: left;
+}
+
+.episode-list-item {
+  width: 100%;
+  background-color: white;
+  margin-bottom: 20px;
+  padding-bottom: 5px;
+
+  h3 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  p {
+    margin: 10px 5px 10px 5px;
+  }
+
+  box-shadow: -12px 12px 0px -1px black;
+  -webkit-box-shadow: -12px 12px 0px -1px black;
+  -moz-box-shadow: -12px 12px 0px -1px black;
+
+}
+
+.ep-title {
+  font-size: 18px;
+  background-color: $yellow-green;
+  padding: 10px;
+
+  h3 {
+    line-height: 22px;
+  }
+}
+
+.ep-released {
+  font-size: 14px;
+}
+
+.listen-icon {
+  display: inline;
+  font-size: 24px;
+  margin-left: 75%;
+  cursor: pointer;
+}
+
+.ep-description {
+  font-size: 16px;
+}

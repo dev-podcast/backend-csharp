@@ -16,7 +16,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\devpodcasts.data.entityframework\devpodcasts.data.entityframework.csproj" />
-      <ProjectReference Include="..\devpodcasts.data.mock\devpodcasts.data.mock.csproj" />
     </ItemGroup>
 
 </Project>

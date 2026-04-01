@@ -1,0 +1,12 @@
+﻿**/*.dockerignore
+**/*.Dockerfile
+**/bin
+**/obj
+**/.git
+**/.idea
+**/.vscode
+**/App_Data
+**/logs
+**/temp
+.dockerignore
+Dockerfile
