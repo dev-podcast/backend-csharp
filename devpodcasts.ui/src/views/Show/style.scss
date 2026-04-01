@@ -1,0 +1,19 @@
+@use '../../styles/variables' as *;
+
+.show {
+  height: 2000px;
+  width: 100%;
+  text-align: center;
+  margin-top: 150px;
+
+  h1 {
+    text-transform: uppercase;
+    font-size: 32px;
+    color: $heading-text;
+  }
+
+  h2 {
+    color: white;
+    margin-bottom: 0px;
+  }
+}

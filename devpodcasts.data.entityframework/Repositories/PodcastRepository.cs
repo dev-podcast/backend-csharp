@@ -20,14 +20,33 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             return SingleQuery(predicate).SingleOrDefault();
         }
 
+        public override Task<List<Podcast>> GetAllAsync()
+        {
+            return _context.Set<Podcast>()
+                .Include(p => p.Tags)
+                .Include(p => p.Categories)
+                .Include(p => p.Episodes.OrderByDescending(e => e.PublishedDate).Take(15))
+                .ToListAsync();
+        }
+
+        public override Task<List<Podcast>> GetAllAsync(Expression<Func<Podcast, bool>> predicate)
+        {
+            return _context.Set<Podcast>().Where(predicate)
+                .Include(p => p.Tags)
+                .Include(p => p.Categories)
+                .Include(p => p.Episodes.OrderByDescending(e => e.PublishedDate).Take(15))
+                .ToListAsync();
+        }
+
         public Task<List<Podcast>> GetAllAsync(Guid id)
         {
             return _context.Set<Podcast>().Where(p => p.Id == id)
                 .Include(p => p.Tags)
-                .Include(p => p.Categories).ToListAsync(); ;   
+                .Include(p => p.Categories)
+                .Include(p => p.Episodes.OrderByDescending(e => e.PublishedDate).Take(15))
+                .ToListAsync();
         }
 
-    
         public override Task<Podcast> GetAsync(Expression<Func<Podcast, bool>> predicate)
         {
             return SingleQuery(predicate).SingleOrDefaultAsync();
@@ -45,7 +64,11 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public Task<List<Podcast>> GetAllBySearch(Expression<Func<Podcast, bool>> predicate)
         {
-            return _context.Set<Podcast>().Where(predicate).ToListAsync();
+            return _context.Set<Podcast>().Where(predicate)
+                .Include(p => p.Tags)
+                .Include(p => p.Categories)
+                .Include(p => p.Episodes.OrderByDescending(e => e.PublishedDate).Take(15))
+                .ToListAsync();
         }
 
         private IQueryable<Podcast> RecentQuery(int podcastLimit = 15, int episodeLimit = 15)
@@ -56,11 +79,11 @@ namespace devpodcasts.Data.EntityFramework.Repositories
                 Title = x.Title,
                 Artists = x.Artists,
                 Episodes = x.Episodes.OrderByDescending(e => e.PublishedDate).Take(episodeLimit).ToList(),
-                Tags = x.Tags,
+                Tags = x.Tags.ToList(),
                 Description = x.Description,
                 ImageUrl = x.ImageUrl,
                 ShowUrl = x.ShowUrl,
-                Categories = x.Categories,
+                Categories = x.Categories.ToList(),
                 FeedUrl = x.FeedUrl,
                 EpisodeCount = x.EpisodeCount,
                 LatestReleaseDate = x.LatestReleaseDate

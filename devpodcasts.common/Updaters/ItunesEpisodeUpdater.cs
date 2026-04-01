@@ -133,20 +133,26 @@ public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
     private async Task SaveTagsAndEpisodeTags(IEnumerable<Episode> episodes, IDictionary<string, ICollection<string>> tagsToMap)
     {
         if (!tagsToMap.Any()) return;
-        var updatedTags = new List<EpisodeTag>();
         foreach (var episode in episodes)
         {
-           var tagDescription = tagsToMap[episode.Title];
+            if (!tagsToMap.ContainsKey(episode.Title)) continue;
+            var tagDescriptions = tagsToMap[episode.Title];
 
-           if (!tagDescription.Any()) return;
-           var matchingTags = await _unitOfWork.TagRepository.GetAllAsync(x => tagDescription.Contains(x.Description));
+            if (tagDescriptions == null || !tagDescriptions.Any()) continue;
+            var matchingTags = await _unitOfWork.TagRepository.GetAllAsync(x => tagDescriptions.Contains(x.Description));
 
-           if (!matchingTags.Any()) return;
-      
-           episode.Tags.AddRange(matchingTags);
-            
-           _unitOfWork.EpisodeRepository.Update(episode);
-           await _unitOfWork.EpisodeRepository.SaveAsync();
+            if (!matchingTags.Any()) continue;
+
+            foreach (var tag in matchingTags)
+            {
+                if (!episode.Tags.Any(t => t.Id == tag.Id))
+                {
+                    episode.Tags.Add(tag);
+                }
+            }
+
+            _unitOfWork.EpisodeRepository.Update(episode);
+            await _unitOfWork.EpisodeRepository.SaveAsync();
         }
     }
     private async Task GetEpisodeDataFromXml(XElement episode, Podcast podcast)

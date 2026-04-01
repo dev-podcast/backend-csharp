@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using devpodcasts.Domain;
 using devpodcasts.Domain.Entities.Dtos;
 using devpodcasts.Domain.Interfaces;
@@ -18,11 +19,12 @@ namespace devpodcasts.Data.EntityFramework.Repositories
             _searchResult = new SearchResult
             {
                 Podcasts = await unitOfWork.PodcastRepository.GetAllBySearch(p => p.Title.Contains(searchString)
-                                                                               || p.Description.Contains(
-                                                                                   searchString) ||
-                                                                               p.Artists.Contains(
-                                                                                   searchString)),
-                Episodes = await unitOfWork.EpisodeRepository.GetAllBySearch(e => e.Title.Contains(searchString))
+                                                                               || p.Description.Contains(searchString) 
+                                                                               || p.Artists.Contains(searchString)
+                                                                               || p.Tags.Any(t => t.Description.Contains(searchString))),
+                Episodes = await unitOfWork.EpisodeRepository.GetAllBySearch(e => e.Title.Contains(searchString) 
+                                                                               || e.Description.Contains(searchString)
+                                                                               || e.Tags.Any(t => t.Description.Contains(searchString)))
             };
 
             return _searchResult;

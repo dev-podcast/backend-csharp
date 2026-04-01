@@ -1,12 +1,18 @@
-﻿namespace devpodcasts.server.api.Middlewares;
+﻿using System.Net;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+
+namespace devpodcasts.server.api.Middlewares;
 
 public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
-    public ErrorHandlingMiddleware(RequestDelegate next)
+    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task Invoke(HttpContext context)
@@ -17,12 +23,20 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
-            // Log the exception
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            _logger.LogError(ex, "An unhandled exception occurred.");
 
-            // Return a custom error response
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            await context.Response.WriteAsync("An unexpected error occurred. Please try again later.");
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            var response = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.InternalServerError,
+                Title = "An unexpected error occurred",
+                Detail = ex.Message // In production, you might want to hide details
+            };
+
+            var json = JsonSerializer.Serialize(response);
+            await context.Response.WriteAsync(json);
         }
     }
 }

@@ -1,0 +1,14 @@
+@use './variables' as *;
+
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-primary;
+}
+
+html {
+  @include linearGradient($gradient-left, $gradient-right);
+}
