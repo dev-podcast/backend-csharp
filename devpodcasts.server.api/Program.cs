@@ -1,9 +1,7 @@
 using System.Globalization;
 using System.Reflection;
-using devpodcasts.Data.EntityFramework;
-using devpodcasts.Data.EntityFramework.Repositories;
-using devpodcasts.Domain;
-using devpodcasts.Domain.Interfaces;
+using devpodcasts.Data.EntityFramework.Extensions;
+using devpodcasts.Domain.Entities;
 using devpodcasts.server.api;
 using devpodcasts.server.api.Extensions;
 using devpodcasts.server.api.Middlewares;
@@ -41,16 +39,7 @@ var _configuration = new ConfigurationBuilder()
 
 var connString = _configuration.GetSection("ConnectionStrings:PodcastDb").Value;
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(connString, op =>
-    {
-        op.MigrationsAssembly("devpodcasts.data.entityframework");
-        op.EnableRetryOnFailure();
-    }).EnableDetailedErrors();
-});
+builder.Services.AddDataServices(connString);
 
 var app = builder.Build();
 

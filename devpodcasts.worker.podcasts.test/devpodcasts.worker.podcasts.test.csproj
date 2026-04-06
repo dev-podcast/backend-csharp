@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\devpodcasts.services.core\devpodcasts.services.core.csproj" />
+    <ProjectReference Include="..\devpodcasts.worker.podcasts\devpodcasts.worker.podcasts.csproj" />
     <ProjectReference Include="..\devpodcasts.common\devpodcasts.common.csproj" />
   </ItemGroup>
 

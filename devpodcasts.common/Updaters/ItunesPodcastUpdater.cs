@@ -2,7 +2,6 @@
 using devpodcasts.Domain.Entities;
 using devpodcasts.common.Interfaces;
 using devpodcasts.common.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using devpodcasts.common.JsonObjects;
@@ -11,32 +10,23 @@ using devpodcasts.common.Builders;
 using devpodcasts.Domain.Interfaces;
 namespace devpodcasts.common.Updaters;
 
-public class ItunesPodcastUpdater : IItunesPodcastUpdater
+internal class ItunesPodcastUpdater(
+    ILogger<ItunesPodcastUpdater> logger,
+    IPodcastRepository podcastRepository,
+    IBasePodcastRepository basePodcastRepository,
+    ITagRepository tagRepository,
+    ICategoryRepository categoryRepository,
+    IItunesHttpClient itunesHttpClient) : IItunesPodcastUpdater
 {
-    private readonly ICollection<Podcast> _podcasts = new List<Podcast>();
-    private readonly IDictionary<string, ICollection<string>> _podcastTags =
-        new Dictionary<string, ICollection<string>>();
-    private readonly ICollection<Tag> _tags = new List<Tag>();
-    private readonly IItunesHttpClient _itunesHttpClient;
-    private readonly ILogger<ItunesPodcastUpdater> _logger;
-    private readonly IPodcastRepository _podcastRepository;
-    private readonly IBasePodcastRepository _basePodcastRepository;
-    private readonly ITagRepository _tagRepository;
-    private readonly ICategoryRepository _categoryRepository;
-
-
-    public ItunesPodcastUpdater(ILogger<ItunesPodcastUpdater> logger,
-        IPodcastRepository podcastRepository,IBasePodcastRepository basePodcastRepository, ITagRepository tagRepository, 
-        ICategoryRepository categoryRepository,  IItunesHttpClient itunesHttpClient)
-    {
-        _logger = logger;
-        _itunesHttpClient = itunesHttpClient;
-        _podcastRepository = podcastRepository;
-        _basePodcastRepository = basePodcastRepository;
-        _tagRepository = tagRepository;
-        _categoryRepository = categoryRepository;
-    }
-
+    private readonly ICollection<Podcast> _podcasts = [];
+    private readonly IDictionary<string, ICollection<string>> _podcastTags = new Dictionary<string, ICollection<string>>();
+    private readonly ICollection<Tag> _tags = [];
+    private readonly IItunesHttpClient _itunesHttpClient = itunesHttpClient;
+    private readonly ILogger<ItunesPodcastUpdater> _logger = logger;
+    private readonly IPodcastRepository _podcastRepository = podcastRepository;
+    private readonly IBasePodcastRepository _basePodcastRepository = basePodcastRepository;
+    private readonly ITagRepository _tagRepository = tagRepository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
     public async Task UpdateDataAsync()
     {
@@ -279,7 +269,7 @@ public class ItunesPodcastUpdater : IItunesPodcastUpdater
     }
 }
 
-public interface IItunesPodcastUpdater : IUpdater
+internal interface IItunesPodcastUpdater : IUpdater
 {
 
 }

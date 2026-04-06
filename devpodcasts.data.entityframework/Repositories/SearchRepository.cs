@@ -10,7 +10,7 @@ namespace devpodcasts.Data.EntityFramework.Repositories
     {
         private SearchResult _searchResult;
 
-        internal SearchRepository(ApplicationDbContext context) : base(context)
+        public SearchRepository(ApplicationDbContext context) : base(context)
         {
         }
 

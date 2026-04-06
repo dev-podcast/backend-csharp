@@ -3,7 +3,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace devpodcasts.common.JsonObjects;
 
-public abstract class BasePodcastJsonObject
+internal abstract class BasePodcastJsonObject
 {
     public string Title { get; set; }
     public string PodcastSite { get; set; }
@@ -13,7 +13,7 @@ public abstract class BasePodcastJsonObject
     public string ItunesId { get; set; }
 }
 
-public class RootJsonObject
+internal class RootJsonObject
 {
     [JsonProperty("General Interest")]
     public IEnumerable<GeneralInterest> GeneralInterest { get; set; }
@@ -53,22 +53,22 @@ public class RootJsonObject
     public IEnumerable<SqlAndDatabases> SqlAndDatabases { get; set; }
 }
 
-public class GeneralInterest : BasePodcastJsonObject {}
-public class NETAndMicrosoftRelated : BasePodcastJsonObject{}
-public class MobileDevelopment : BasePodcastJsonObject {}
-public class JavascriptAndWeb: BasePodcastJsonObject { }
-public class GameDevelopment: BasePodcastJsonObject { }
-public class Freelancing: BasePodcastJsonObject { }
-public class Entrepreneurial : BasePodcastJsonObject { }
-public class Python : BasePodcastJsonObject { }
-public class PHP: BasePodcastJsonObject { }
+internal class GeneralInterest : BasePodcastJsonObject {}
+internal class NETAndMicrosoftRelated : BasePodcastJsonObject{}
+internal class MobileDevelopment : BasePodcastJsonObject {}
+internal class JavascriptAndWeb: BasePodcastJsonObject { }
+internal class GameDevelopment: BasePodcastJsonObject { }
+internal class Freelancing: BasePodcastJsonObject { }
+internal class Entrepreneurial : BasePodcastJsonObject { }
+internal class Python : BasePodcastJsonObject { }
+internal class PHP: BasePodcastJsonObject { }
 [JsonObject("C++")]
-public class CPlusPlus : BasePodcastJsonObject {}
-public class JavaAndJVMLanguages : BasePodcastJsonObject { }
-public class Ruby: BasePodcastJsonObject { }
-public class MiscellaneousLanguages : BasePodcastJsonObject { }
-public class DataAndMachineLearning : BasePodcastJsonObject { }
-public class AgileAndScrum : BasePodcastJsonObject { }
-public class DevOps  : BasePodcastJsonObject { }
-public class Cloud : BasePodcastJsonObject { }
-public class SqlAndDatabases : BasePodcastJsonObject { }
+internal class CPlusPlus : BasePodcastJsonObject {}
+internal class JavaAndJVMLanguages : BasePodcastJsonObject { }
+internal class Ruby: BasePodcastJsonObject { }
+internal class MiscellaneousLanguages : BasePodcastJsonObject { }
+internal class DataAndMachineLearning : BasePodcastJsonObject { }
+internal class AgileAndScrum : BasePodcastJsonObject { }
+internal class DevOps  : BasePodcastJsonObject { }
+internal class Cloud : BasePodcastJsonObject { }
+internal class SqlAndDatabases : BasePodcastJsonObject { }

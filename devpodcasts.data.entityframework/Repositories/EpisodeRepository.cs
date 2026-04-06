@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    public class EpisodeRepository : Repository<Episode>, IEpisodeRepository
+    internal class EpisodeRepository : Repository<Episode>, IEpisodeRepository
     {
         public EpisodeRepository(ApplicationDbContext context) : base(context)
         {
@@ -17,12 +17,12 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public override Episode Get(Expression<Func<Episode, bool>> predicate)
         {
-            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).SingleOrDefault();
+            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).FirstOrDefault();
         }
 
         public override Task<Episode> GetAsync(Expression<Func<Episode, bool>> predicate)
         {
-            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).SingleOrDefaultAsync();
+            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).FirstOrDefaultAsync();
         }
 
         public List<Episode> GetRecent(Guid Id, int numberToTake)
@@ -39,12 +39,12 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public Episode GetByTag(Expression<Func<Episode, bool>> predicate)
         {
-            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).SingleOrDefault();
+            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).FirstOrDefault();
         }
 
         public Task<Episode> GetByTagAsync(Expression<Func<Episode, bool>> predicate)
         {
-            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).SingleOrDefaultAsync();
+            return _context.Set<Episode>().Where(predicate).Include(e => e.Tags).FirstOrDefaultAsync();
         }
 
         public override Task<List<Episode>> GetAllAsync()

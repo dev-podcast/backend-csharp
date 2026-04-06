@@ -1,13 +1,90 @@
-@devpodcasts.server.api_HostAddress = http://localhost:5201
-@podcastId = 204
+﻿@devpodcasts.server.api_HostAddress = http://localhost:5201
+@podcastId = 00000000-0000-0000-0000-000000000000
+@episodeId = 00000000-0000-0000-0000-000000000000
+@categoryId = 00000000-0000-0000-0000-000000000000
+@tagId = 00000000-0000-0000-0000-000000000000
+@searchTerm = .net
 
-GET {{devpodcasts.server.api_HostAddress}}/weatherforecast/
+### Podcasts
+
+# Get all podcasts
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcasts
 Accept: application/json
 
 ###
-GET {{devpodcasts.server.api_HostAddress}}/v1/podcasts/
+
+# Get recent podcasts
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcasts/recent?podcastLimit=10&episodeLimit=5
 Accept: application/json
 
 ###
-GET {{devpodcasts.server.api_HostAddress}}/v1/podcast{{podcastId}}
+
+# Get podcast by ID
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcast/{{podcastId}}
+Accept: application/json
+
+###
+
+# Get episodes for a podcast
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcasts/{{podcastId}}/episodes
+Accept: application/json
+
+###
+
+# Get categories for a podcast
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcasts/{{podcastId}}/categories
+Accept: application/json
+
+###
+
+# Search podcasts (title/description)
+GET {{devpodcasts.server.api_HostAddress}}/v1/podcasts/search?searchTerm={{searchTerm}}
+Accept: application/json
+
+### Episodes
+
+# Get specific episode
+GET {{devpodcasts.server.api_HostAddress}}/v1/episodes/{{podcastId}}/{{episodeId}}
+Accept: application/json
+
+###
+
+# Get all episodes for a show
+GET {{devpodcasts.server.api_HostAddress}}/v1/episodes/all/{{podcastId}}
+Accept: application/json
+
+###
+
+# Get recent episodes for a show
+GET {{devpodcasts.server.api_HostAddress}}/v1/episodes/recent/{{podcastId}}?limit=10
+Accept: application/json
+
+### Categories
+
+# Get all categories
+GET {{devpodcasts.server.api_HostAddress}}/v1/category/all
+Accept: application/json
+
+###
+
+# Get category by ID
+GET {{devpodcasts.server.api_HostAddress}}/v1/category/{{categoryId}}
+Accept: application/json
+
+### Tags
+
+# Get all tags
+GET {{devpodcasts.server.api_HostAddress}}/v1/tags/all
+Accept: application/json
+
+###
+
+# Get tag by ID
+GET {{devpodcasts.server.api_HostAddress}}/v1/tags/{{tagId}}
+Accept: application/json
+
+### Search (Unified)
+
+# Unified search for podcasts and episodes
+GET {{devpodcasts.server.api_HostAddress}}/v1/search/{{searchTerm}}
 Accept: application/json

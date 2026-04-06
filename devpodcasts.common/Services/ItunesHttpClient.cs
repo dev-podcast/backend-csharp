@@ -7,27 +7,27 @@ using System.Xml.Linq;
 
 namespace devpodcasts.common.Services
 {
-    public interface IItunesHttpClient
+    internal interface IItunesHttpClient
     {
         Task<JArray> QueryItunesId(string itunesId);
         Task<IReadOnlyCollection<XElement>> QueryFeedUrl(string url);
     }
 
-    public class ItunesHttpClient : IItunesHttpClient
+    internal class ItunesHttpClient : IItunesHttpClient
     {
       
         private readonly ILogger<ItunesHttpClient> _logger;
-        private readonly IHttpClientFactory _clientFactory;
-        public ItunesHttpClient(ILogger<ItunesHttpClient> logger, IHttpClientFactory clientFactory)
+        private readonly HttpClient _httpClient;
+        public ItunesHttpClient(ILogger<ItunesHttpClient> logger, HttpClient httpClient)
         {
             _logger = logger;
-            _clientFactory = clientFactory;
+            _httpClient = httpClient;
         }
 
         public async Task<JArray> QueryItunesId(string itunesId)
         {
 
-            var client = _clientFactory.CreateClient();
+            var client = _httpClient;
             var maxTries = 3;
             var remainingTries = maxTries;
             do
@@ -86,7 +86,7 @@ namespace devpodcasts.common.Services
 
         public async Task<IReadOnlyCollection<XElement>> QueryFeedUrl(string url)
         {
-            var client = _clientFactory.CreateClient();
+            var client = _httpClient;
             var maxTries = 3;
             var remainingTries = maxTries;
             do

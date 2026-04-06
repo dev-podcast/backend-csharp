@@ -5,7 +5,7 @@ using devpodcasts.common.Interfaces;
 
 namespace devpodcasts.common.Factories
 {
-    public class DbContextFactory : IDbContextFactory
+    internal class DbContextFactory : IDbContextFactory
     {
         private IConfiguration _configuration { get; set; }
 

@@ -11,7 +11,7 @@ using devpodcasts.Domain.Interfaces;
 
 namespace devpodcasts.common.Updaters;
 
-public class PodCategoriesUpdater : IPodCategoriesUpdater
+internal class PodCategoriesUpdater : IPodCategoriesUpdater
 {
     private readonly ILogger<IPodCategoriesUpdater> _logger;
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
@@ -157,7 +157,7 @@ public class PodCategoriesUpdater : IPodCategoriesUpdater
     }
 }
 
-public interface IPodCategoriesUpdater : IUpdater
+internal interface IPodCategoriesUpdater : IUpdater
 {
 
 }

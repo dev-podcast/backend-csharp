@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    public class TagRepository : Repository<Tag>, ITagRepository
+    internal class TagRepository : Repository<Tag>, ITagRepository
     {
         public TagRepository(ApplicationDbContext context) : base(context)
         {

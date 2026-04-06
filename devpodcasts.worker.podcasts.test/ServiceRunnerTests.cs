@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using devpodcasts.common.Interfaces;
-using devpodcasts.Services.Core.Services;
+using devpodcasts.Worker.Podcasts.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace devpodcasts.Services.Core.Test
+namespace devpodcasts.Worker.Podcasts.Test
 {
     public class ServiceRunnerTests
     {
