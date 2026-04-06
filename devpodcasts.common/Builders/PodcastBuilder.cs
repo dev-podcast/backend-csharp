@@ -1,14 +1,9 @@
 ﻿using devpodcasts.common.Extensions;
 using devpodcasts.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace devpodcasts.common.Builders
 {
-    public class PodcastBuilder
+    internal class PodcastBuilder
     {
 
         private Guid _id;

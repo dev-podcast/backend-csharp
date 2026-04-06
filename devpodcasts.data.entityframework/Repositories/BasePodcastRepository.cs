@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    public class BasePodcastRepository : Repository<BasePodcast>, IBasePodcastRepository
+    internal class BasePodcastRepository : Repository<BasePodcast>, IBasePodcastRepository
     {
         public BasePodcastRepository(ApplicationDbContext context) : base(context)
         {

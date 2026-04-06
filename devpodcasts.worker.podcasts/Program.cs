@@ -1,16 +1,25 @@
-﻿using devpodcasts.common.Interfaces;
-using devpodcasts.Services.Core.Extensions;
-using devpodcasts.Services.Core.Services;
+﻿using System.Reflection;
+using devpodcasts.Worker.Podcasts.Extensions;
+using devpodcasts.Worker.Podcasts.Services;
 using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
+
+var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", true, true)
+    .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+    .AddUserSecrets(typeof(Program).GetTypeInfo().Assembly, optional: false).Build();
+
 
 builder.Services.AddSerilog((services, loggerConfiguration) => loggerConfiguration
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
     .WriteTo.Console());
 
-builder.Services.AddCustomServices(builder.Configuration);
+builder.Services.AddCustomServices(configuration);
 builder.Services.AddHostedService<PodcastUpdateWorker>();
 
 var host = builder.Build();

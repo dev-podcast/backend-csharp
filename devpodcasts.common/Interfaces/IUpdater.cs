@@ -1,6 +1,6 @@
 ﻿namespace devpodcasts.common.Interfaces;
 
-public interface IUpdater
+internal interface IUpdater
 {
     Task UpdateDataAsync();
 }

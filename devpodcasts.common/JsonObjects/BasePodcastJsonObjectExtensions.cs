@@ -3,7 +3,7 @@ using devpodcasts.Domain.Entities;
 
 namespace devpodcasts.common.JsonObjects
 {
-    public static class BasePodcastJsonObjectExtensions
+    internal static class BasePodcastJsonObjectExtensions
     {
         public  static BasePodcast CreateBasePodcast(this BasePodcastJsonObject basePodcastJsonObject)
         {

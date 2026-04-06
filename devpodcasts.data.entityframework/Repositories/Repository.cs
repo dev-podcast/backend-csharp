@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace devpodcasts.Data.EntityFramework.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         public ApplicationDbContext _context;
         private DbSet<TEntity> _set;
@@ -44,7 +44,7 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public virtual TEntity Get(Expression<Func<TEntity, bool>> condition)
         {
-            return _context.Set<TEntity>().Where(condition).SingleOrDefault();
+            return _context.Set<TEntity>().Where(condition).FirstOrDefault();
         }
 
         public virtual ICollection<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate)
@@ -64,7 +64,7 @@ namespace devpodcasts.Data.EntityFramework.Repositories
 
         public virtual Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return _context.Set<TEntity>().Where(predicate).SingleOrDefaultAsync();
+            return _context.Set<TEntity>().Where(predicate).FirstOrDefaultAsync();
         }
 
         public void Remove(TEntity entity)

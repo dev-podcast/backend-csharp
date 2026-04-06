@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Xml.Linq;
-using devpodcasts.Data.EntityFramework;
 using devpodcasts.Domain.Entities;
 using devpodcasts.common.Interfaces;
 using devpodcasts.common.Services;
@@ -14,70 +13,69 @@ using devpodcasts.Domain.Interfaces;
 
 namespace devpodcasts.common.Updaters;
 
-public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
+internal class ItunesEpisodeUpdater(
+    ILogger<ItunesEpisodeUpdater> logger,
+    IItunesHttpClient itunesHttpClient,
+    IEpisodeRepository episodeRepository,
+    IPodcastRepository podcastRepository,
+    ITagRepository tagRepository,
+    IUnitOfWork unitOfWork) : IITunesEpisodeUpdater
 {
-    private readonly ILogger<ItunesEpisodeUpdater> _logger;
-    private readonly IItunesHttpClient _itunesHttpClient;
-    private readonly ConcurrentDictionary<string, Episode> _episodes = new ConcurrentDictionary<string, Episode>();
-    private readonly ConcurrentDictionary<string, ICollection<string>> _episodeTags = new ConcurrentDictionary<string, ICollection<string>>();
-    private readonly ConcurrentBag<Tag> _tags = new ConcurrentBag<Tag>();
-    private readonly IPodcastRepository _podcastRepository;
-    private readonly ITagRepository _tagRepository;
-    private readonly IEpisodeRepository _episodeRepository;
+    private readonly ILogger<ItunesEpisodeUpdater> _logger = logger;
+    private readonly IItunesHttpClient _itunesHttpClient = itunesHttpClient;
+    private readonly IEpisodeRepository _episodeRepository = episodeRepository;
+    private readonly IPodcastRepository _podcastRepository = podcastRepository;
+    private readonly ITagRepository _tagRepository = tagRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ConcurrentDictionary<string, Episode> _episodes = [];
+    private readonly ConcurrentDictionary<string, ICollection<string>> _episodeTags = [];
+    private readonly List<Tag> _tags = [];
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="dbContextFactory"></param>
-    /// <param name="itunesQueryService"></param>
-    public ItunesEpisodeUpdater(ILogger<ItunesEpisodeUpdater> logger,
-        IItunesHttpClient itunesHttpClient, IEpisodeRepository episodeRepository, IPodcastRepository podcastRepository, ITagRepository tagRepository, IUnitOfWork unitOfWork)
-    {
-        _logger = logger;
-        _itunesHttpClient = itunesHttpClient;
-        _episodeRepository = episodeRepository;
-        _tagRepository = tagRepository;
-        _podcastRepository = podcastRepository;
-        _unitOfWork = unitOfWork;
-    }
     public async Task UpdateDataAsync()
     {
         var allPodcasts = await _unitOfWork.PodcastRepository.GetAllAsync();
 
         foreach (var podcast in allPodcasts)
         {
+            _episodes.Clear();
+            _episodeTags.Clear();
+            _tags.Clear();
+
             _logger.LogInformation("Updating episodes for podcast: " + podcast.Title);
             IEnumerable<XElement> episodes = await _itunesHttpClient.QueryFeedUrl(podcast.FeedUrl);
             foreach (var episode in episodes)
                 await GetEpisodeDataFromXml(episode, podcast);
 
-            await using var transaction = await _unitOfWork.BeginTransactionAsync();
+            var strategy = _unitOfWork.CreateExecutionStrategy();
 
-            try
+            await strategy.ExecuteAsync(async () =>
             {
-                if (_tags.Any())
-                {
-                    await _unitOfWork.TagRepository.AddRangeAsync(_tags);
-                }
-                
-                if (_episodes.Values .Any())
-                {
-                    await _unitOfWork.EpisodeRepository.AddRangeAsync(_episodes.Values);
-                }
+                await using var transaction = await _unitOfWork.BeginTransactionAsync();
 
-                await _unitOfWork.SaveChangesAsync();
+                try
+                {
+                    if (_tags.Any())
+                    {
+                        await _unitOfWork.TagRepository.AddRangeAsync(_tags);
+                    }
 
-                await _unitOfWork.CommitTransactionAsync();
-            }
-            catch (Exception ex)
-            {
-                // Roll back the transaction if something goes wrong
-                await transaction.RollbackAsync();
-                throw; // Rethrow the exception for logging or further handling
-            }
+                    if (_episodes.Values.Any())
+                    {
+                        await _unitOfWork.EpisodeRepository.AddRangeAsync(_episodes.Values);
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
+
+                    await _unitOfWork.CommitTransactionAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Roll back the transaction if something goes wrong
+                    await _unitOfWork.RollbackTransactionAsync();
+                    throw; // Rethrow the exception for logging or further handling
+                }
+            });
             // if (_tags.Any())
             // {
             //     await _unitOfWork.TagRepository.AddRangeAsync(_tags);
@@ -133,27 +131,35 @@ public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
     private async Task SaveTagsAndEpisodeTags(IEnumerable<Episode> episodes, IDictionary<string, ICollection<string>> tagsToMap)
     {
         if (!tagsToMap.Any()) return;
+        var allTagDescriptions = tagsToMap.Values.SelectMany(x => x).Distinct().ToList();
+        var allMatchingTags = await _unitOfWork.TagRepository.GetAllAsync(x => allTagDescriptions.Contains(x.Description));
+        var tagsByDescription = allMatchingTags.ToDictionary(x => x.Description, x => x);
+
         foreach (var episode in episodes)
         {
-            if (!tagsToMap.ContainsKey(episode.Title)) continue;
-            var tagDescriptions = tagsToMap[episode.Title];
-
+            if (!tagsToMap.TryGetValue(episode.Title, out var tagDescriptions)) continue;
             if (tagDescriptions == null || !tagDescriptions.Any()) continue;
-            var matchingTags = await _unitOfWork.TagRepository.GetAllAsync(x => tagDescriptions.Contains(x.Description));
 
-            if (!matchingTags.Any()) continue;
-
-            foreach (var tag in matchingTags)
+            bool modified = false;
+            foreach (var description in tagDescriptions)
             {
-                if (!episode.Tags.Any(t => t.Id == tag.Id))
+                if (tagsByDescription.TryGetValue(description, out var tag))
                 {
-                    episode.Tags.Add(tag);
+                    if (!episode.Tags.Any(t => t.Id == tag.Id))
+                    {
+                        episode.Tags.Add(tag);
+                        modified = true;
+                    }
                 }
             }
 
-            _unitOfWork.EpisodeRepository.Update(episode);
-            await _unitOfWork.EpisodeRepository.SaveAsync();
+            if (modified)
+            {
+                _unitOfWork.EpisodeRepository.Update(episode);
+            }
         }
+        
+        await _unitOfWork.SaveChangesAsync();
     }
     private async Task GetEpisodeDataFromXml(XElement episode, Podcast podcast)
     {
@@ -164,7 +170,7 @@ public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
 
             if (title != null)
             {
-                var existingEpisode = await CheckForExistingEpisode(title);
+                var existingEpisode = await CheckForExistingEpisode(title, podcast.Id);
                 if (existingEpisode == null)
                 {
                     await CreateNewEpisode(title, podcast, childElements);
@@ -188,9 +194,19 @@ public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
                     
         }
     }
-    private async Task<Episode?> CheckForExistingEpisode(XElement title)
+    private async Task<Episode?> CheckForExistingEpisode(XElement title, Guid podcastId)
     {
-        var existingEpisode = await  _episodeRepository.GetAsync(x => x.Title == title.Value);
+        var existingEpisode = await _episodeRepository.GetAsync(x => x.Title == title.Value && x.PodcastId == podcastId);
+        if (existingEpisode == null)
+        {
+            existingEpisode = _episodes.Values.FirstOrDefault(x => x.Title == title.Value && x.PodcastId == podcastId);
+        }
+
+        if (existingEpisode != null)
+        {
+            _logger.LogInformation($"Episode already exists: {title.Value} for Podcast: {podcastId}");
+        }
+
         return existingEpisode;
     }
 
@@ -342,7 +358,7 @@ public class ItunesEpisodeUpdater : IITunesEpisodeUpdater
     }
 }
 
-public interface IITunesEpisodeUpdater : IUpdater
+internal interface IITunesEpisodeUpdater : IUpdater
 {
 
 }

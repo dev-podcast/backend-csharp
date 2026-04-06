@@ -1,16 +1,16 @@
 ﻿using devpodcasts.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 
-namespace devpodcasts.Services.Core.Services;
+namespace devpodcasts.Worker.Podcasts.Services;
 
-public interface IDatabaseService
+internal interface IDatabaseService
 {
     Task<bool> CanConnectAsync();
     Task<IEnumerable<string>> GetPendingMigrationsAsync();
     Task MigrateAsync();
 }
 
-public class DatabaseService : IDatabaseService
+internal class DatabaseService : IDatabaseService
 {
     private readonly ApplicationDbContext _context;
 

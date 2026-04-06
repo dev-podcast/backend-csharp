@@ -2,7 +2,7 @@
 
 namespace devpodcasts.common.JsonObjects
 {
-    public class PodcastResult
+    internal class PodcastResult
     {
         [JsonProperty("trackName")] public string TrackName { get; set; }
         [JsonProperty("artworkUrl600")] public string ImageUrl600 { get; set; }

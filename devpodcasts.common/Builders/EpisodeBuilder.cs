@@ -1,16 +1,11 @@
 ﻿using devpodcasts.common.Constants;
 using devpodcasts.common.Extensions;
 using devpodcasts.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace devpodcasts.common.Builders
 {
-    public class EpisodeBuilder
+    internal class EpisodeBuilder
     {
         private Guid _id;
         private string? _title;

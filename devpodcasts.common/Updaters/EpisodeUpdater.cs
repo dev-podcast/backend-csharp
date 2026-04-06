@@ -1,20 +1,16 @@
 ﻿using System.Collections.Concurrent;
 using System.Xml.Linq;
 using devpodcasts.common.Builders;
-using devpodcasts.common.Extensions;
-using devpodcasts.common.Interfaces;
 using devpodcasts.common.Services;
-using devpodcasts.Data.EntityFramework;
 using devpodcasts.Domain;
 using devpodcasts.Domain.Entities;
-using devpodcasts.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 using static devpodcasts.common.Constants.EpisodeConstants;
 using ExecutionStrategyExtensions = Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions;
 
 namespace devpodcasts.common.Updaters;
 
-public class EpisodeUpdater(
+internal class EpisodeUpdater(
     ILogger<EpisodeUpdater> logger,
     IItunesHttpClient itunesHttpClient,
     IUnitOfWork unitOfWork)
