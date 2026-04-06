@@ -131,7 +131,6 @@ internal class ItunesEpisodeUpdater(
     private async Task SaveTagsAndEpisodeTags(IEnumerable<Episode> episodes, IDictionary<string, ICollection<string>> tagsToMap)
     {
         if (!tagsToMap.Any()) return;
-        
         var allTagDescriptions = tagsToMap.Values.SelectMany(x => x).Distinct().ToList();
         var allMatchingTags = await _unitOfWork.TagRepository.GetAllAsync(x => allTagDescriptions.Contains(x.Description));
         var tagsByDescription = allMatchingTags.ToDictionary(x => x.Description, x => x);
