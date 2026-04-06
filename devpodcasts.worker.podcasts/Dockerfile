@@ -2,25 +2,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy the solution file and project files first for better layer caching
-COPY devpodcasts.sln ./
-COPY devpodcasts.worker.podcasts/devpodcasts.worker.podcasts.csproj devpodcasts.worker.podcasts/
-COPY devpodcasts.common/devpodcasts.common.csproj devpodcasts.common/
-COPY devpodcasts.data.entityframework/devpodcasts.data.entityframework.csproj devpodcasts.data.entityframework/
-COPY devpodcasts.domain/devpodcasts.domain.csproj devpodcasts.domain/
-COPY devpodcasts.server.api/devpodcasts.server.api.csproj devpodcasts.server.api/
-COPY devpodcasts.worker.podcasts.test/devpodcasts.worker.podcasts.test.csproj devpodcasts.worker.podcasts.test/
-COPY devpodcasts.ui/devpodcasts.ui.csproj devpodcasts.ui/
+# Copy project files and restore dependencies
+COPY ["devpodcasts.worker.podcasts/devpodcasts.worker.podcasts.csproj", "devpodcasts.worker.podcasts/"]
+COPY ["devpodcasts.common/devpodcasts.common.csproj", "devpodcasts.common/"]
+COPY ["devpodcasts.data.entityframework/devpodcasts.data.entityframework.csproj", "devpodcasts.data.entityframework/"]
+COPY ["devpodcasts.domain/devpodcasts.domain.csproj", "devpodcasts.domain/"]
 
 # Restore dependencies
-RUN dotnet restore devpodcasts.worker.podcasts/devpodcasts.worker.podcasts.csproj
+RUN dotnet restore "devpodcasts.worker.podcasts/devpodcasts.worker.podcasts.csproj"
 
 # Copy the remaining files
 COPY . .
 
 # Build and publish the worker project
 WORKDIR "/src/devpodcasts.worker.podcasts"
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish "devpodcasts.worker.podcasts.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Use the official .NET runtime image for running the project
 FROM mcr.microsoft.com/dotnet/runtime:10.0 AS final
