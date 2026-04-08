@@ -1,6 +1,9 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-RUN apt-get update && apt-get install -y nodejs npm
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Copy project files and restore dependencies
 COPY ["devpodcasts.ui/devpodcasts.ui.csproj", "devpodcasts.ui/"]
@@ -13,6 +16,11 @@ RUN dotnet restore "devpodcasts.ui/devpodcasts.ui.csproj"
 # Copy the remaining files and build the application
 COPY . .
 WORKDIR "/src/devpodcasts.ui"
+
+# Restore npm packages
+RUN npm install
+
+# Build and publish
 RUN dotnet publish "devpodcasts.ui.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Final image
