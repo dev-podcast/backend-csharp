@@ -6,17 +6,56 @@ services:
     container_name: sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=password
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
     ports:
       - "1433:1433"
     volumes:
       - sqlserverdata:/var/opt/mssql
     networks:
-      - mssql_network
+      - app-network
+
+  api:
+    image: ghcr.io/${GITHUB_REPOSITORY}/api:latest
+    build:
+      context: ..
+      dockerfile: devpodcasts.server.api/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=DevPodcasts;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - sqlserver
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  ui:
+    image: ghcr.io/${GITHUB_REPOSITORY}/ui:latest
+    build:
+      context: ..
+      dockerfile: devpodcasts.ui/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+
+  worker:
+    image: ghcr.io/${GITHUB_REPOSITORY}/worker:latest
+    build:
+      context: ..
+      dockerfile: devpodcasts.worker.podcasts/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=DevPodcasts;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True
+    depends_on:
+      - sqlserver
+    networks:
+      - app-network
 
 volumes:
   sqlserverdata:
 
 networks:
-  mssql_network:
+  app-network:
     driver: bridge
