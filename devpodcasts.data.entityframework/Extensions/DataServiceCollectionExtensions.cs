@@ -27,7 +27,7 @@ public static class DataServiceCollectionExtensions
                 op.MigrationsAssembly("devpodcasts.data.entityframework");
                 op.EnableRetryOnFailure();
             }).EnableDetailedErrors();
-        });
+        }, ServiceLifetime.Scoped);
 
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IBasePodcastRepository, BasePodcastRepository>();
